@@ -1,0 +1,75 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Update Progress Project {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Update Progress</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="/updateprogress">
+                                <div class="row">
+                                    <div class="col-md-5 pr-1">
+                                        <div class="form-group">
+                                            <label>Kode Proyek</label>
+                                            <input type="text" id='code_project' name='code_project' class="form-control"  placeholder="Kode Proyek" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-5 pr-1">
+                                        <div class="form-group">
+                                            <label>Tanggal</label>
+                                            <input type="date" id='tgl_update' name='tgl_update' class="form-control"  placeholder="Tanggal Update Progress" value={{ datetime }}>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Plan (%)</label>
+                                            <input type='number' id='plan_project' name='plan_project' class="form-control" placeholder="Plan(%)" value=""></input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Realisasi (%)</label>
+                                            <input type='number' id='real_project' name='real_project' class="form-control" placeholder="Realisasi(%)" value=""></input>
+                                        </div>
+                                    </div>
+                                </div>    
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Catatan</label>
+                                            <textarea id='notes' name='notes' rows="20" cols="100" class="form-control" placeholder="Here can be your description" value=""></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button name="updateprogress" type="submit" class="btn btn-info btn-fill pull-right">Kirim</button>
+                                <br>
+                                <div class="clearfix"></div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

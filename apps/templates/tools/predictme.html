@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Machine Learning Prediction {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-header ">
+                    <h4 class="card-title">Machine Learning Prediction</h4>
+                    <p class="card-category">Here is a Machine Learning Prediction using PyCaret</p>
+                    
+                    <form action = "/upload_datatest" method = "post" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                            <input type="file" name="datatest" />   
+                            <input type = "submit" value="Upload Test Data">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {%if tables %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% for table in tables %}
+                            {{ titles[loop.index] }}
+                            {{ table|safe }}
+                        {% endfor %}
+                    </div>
+                    <div class="card-body">
+                        <form action = "/uploadmodel" method = "post" enctype="multipart/form-data">
+                            <input type="hidden" id="filedatauji" name="filedatauji" class="form-control"  value="{{ filename }}" />        
+                            <label>{{ filename }}</label>
+                            <h4>Load the model:</h4>
+                            <br />
+                            <label>Input the target:</label>
+                            <input type="input" id="target" name="target" placeholder="Input the target.." ="form-control"  value="{{ target }}" />        
+                            <br />
+                            <br />
+                            <input type="file" name="file" />   
+                            <input type = "submit" value="Predict">    
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {%if prediction_data %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Prediction Result</h4>                            
+                    </div>
+                    <div>
+                        {% for table in prediction_data %}
+                            {{ prediction_title[loop.index] }}
+                            {{ table|safe }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        //`demo.initGoogleMaps();
+    });
+</script>
+
+{% endblock javascripts %}

@@ -1,0 +1,227 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Machine Learning Modeling {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-header ">
+                    <h4 class="card-title">Machine Learning Modeling using PyCaret</h4>
+                    <p class="card-category">Here is a Machine Learning Modeling using PyCaret</p>
+                    <p>
+                    <ul class="nav nav-tabs">
+                        {% for name, attr in my_dict.items() %}
+                            {% if loop.index == 1 %}
+                            <li class="active">
+                                <a class="nav-link active" data-toggle="tab" href="#{{ attr }}">{{ name }}</a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a class="nav-link" data-toggle="tab" href="#{{ attr }}">{{ name }}</a>
+                            </li>
+                            {% endif %}
+                        {%endfor%}
+                    </ul>
+                    <div class="tab-content">
+                        {% for name, attr in my_dict.items() %}
+                            {% if loop.index == 1 %}
+                                <div id="{{ attr }}" class="tab-pane fade show in active" >
+                                    <h3>{{ name }}</h3>
+                                    <p>This module can be used for binary problems. It provides several pre-processing features that prepare the data for modeling through the setup function. It has over 18 ready-to-use algorithms and several plots to analyze the performance of trained models.</p>
+                                </div>
+                            {% else %}
+                                <div id="{{ attr }}" class="tab-pane fade">
+                                    <h3>{{ name }}</h3>
+                                    {% if loop.index==2 %}
+                                        <p>This module can be used for multiclass problems. It provides several pre-processing features that prepare the data for modeling through the setup function. It has over 18 ready-to-use algorithms and several plots to analyze the performance of trained models.</p>
+                                    {% elif loop.index==3 %}
+                                    <p>It provides several pre-processing features that prepare the data for modeling through the setup function. It has over 10 ready-to-use algorithms and several plots to analyze the performance of trained models.</p>
+                                    {% elif loop.index==4 %}
+                                    <p>PyCaret's Anomaly Detection module provides several pre-processing features to prepare the data for modeling through the setup function. It has over 10 ready-to-use algorithms and few plots to analyze the performance of trained models.</p>
+                                    {% elif loop.index==5 %}
+                                    <p>PyCaret's regression module has many preprocessing capabilities and it coems with over 25 ready-to-use algorithms and several plots to analyze the performance of trained model.</p>
+                                    {% else %}
+                                    <p>It comes built-in with preprocessing capabilities and over 30 algorithms comprising of statistical / time-series methods as well as machine learning based models. In addition to the model training, this module has lot of other capabilities such as automated hyperparameter tuning, ensembling, model analysis, model packaging and deployment capabilities.</p>
+                                    {%endif%}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <label>Module:</label>
+                    <div class="dropdown">
+                        <div class="input-group-btn">
+                            <button class="btn btn-info btn-md dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% if selected_model %}
+                                    {{ selected_model }}
+                                {% else %}
+                                    Model
+                                {% endif %}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% for name, attr in my_dict.items() %}
+                                    {% if selected_model==name %}
+                                        <a class="dropdown-item" href="#" selected>{{ name }}</a>
+                                    {% else %}
+                                        <a class="dropdown-item" href="#">{{ name }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <form action = "/uploaderml" method = "post" enctype="multipart/form-data">
+                        <input type="hidden" id="model" name="model" class="form-control"  value="" />        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card-header ">
+                                    <label>Input the target:</label>
+                                    <input type="input" id="target" name="target" placeholder="Input the target.." ="form-control"  value="{{ target }}" />        
+                                    <br />
+                                    <label>Give the model name you want:</label>
+                                    <input type="input" id="model_name" name="model_name" placeholder="Choose model name..." ="form-control"  value="{{ model_name }}" />        
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <input type="file" name="file" />   
+                        <input type = "submit" value="Upload">
+                    </form>
+                    <div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {%if tables %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% for table in tables %}
+                            {{ titles[loop.index] }}
+                            {{ table|safe }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if best_data or imp_img%}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        {% for table in best_data %}
+                        {{ best_title[loop.index] }}
+                        {{ table | safe }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        {% if imp_img %}
+                        <img id="imp_img" style="width: 100%;height: 100%;" src="data:image/jpeg;base64,{{ imp_img }}">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if conf_mat_img or auc_img %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <img id="conf_matrix" style="width: 100%;height: 100%;" src="data:image/jpeg;base64,{{ conf_mat_img }}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        {% if auc_img %}
+                        <img id="auc_img" style="width: 100%;height: 100%;" src="data:image/jpeg;base64,{{ auc_img }}">
+                        {% endif %}     
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if holdout_pred_data %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% for table in holdout_pred_data %}
+                        {{ holdout_pred_title[loop.index] }}
+                        {{ table | safe }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if holdout_pred_data %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {% for table in prediction_data %}
+                        {{ prediction_title[loop.index] }}
+                        {{ table | safe }}
+                        {% endfor %} 
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if msg %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    <span>{{ msg }}.</span>
+                </div>
+                <form action = "/downloadml" method = "post" enctype="multipart/form-data">
+                    <input type="hidden" id="model_name" name="model_name" class="form-control"  value="{{ model_name}}" />        
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card-header ">
+                                <h4>Download model generated</h4>
+                                <input type = "submit" value="Download">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>   
+        {% endif %}    
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        //`demo.initGoogleMaps();
+    });
+</script>
+<script>
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        $("#model").val($(this).text());
+    });
+</script>
+{% endblock javascripts %}

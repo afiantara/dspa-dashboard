@@ -1,0 +1,269 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card strpied-tabled-with-hover">
+                        <div class="card-header ">
+                            <h4 class="card-title">Project Progress</h4>
+                            <p class="card-category">Project List, Realization and Performance</p>
+                        </div>
+                        <div class="card-body table-full-width table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Kode</th>
+                                    <th>Deskripsi Kegiatan</th>
+                                    <th>Tanggal Mulai</th>
+                                    <th>Tanggal Selesai</th>
+                                    <th>Plan (%)</th>
+                                    <th>Realization (%)</th>
+                                    <th>Pencapaian (%)</th>
+                                </thead>
+                                <tbody>
+                                    {%for item in proyek%}
+                                    <tr>
+                                        <td>{{ item.id_project }}</td>
+                                        <td>{{ item.code_project }}</td>
+                                        <td>{{ item.desc_project }}</td>
+                                        <td>{{ item.start_date }}</td>
+                                        <td>{{ item.end_date }}</td>
+                                        <td>{%if item.plan_project is not none: %}
+                                            {{ '%0.2f'|format(item.plan_project|float) }}</td>
+                                            {%endif%}
+                                        <td>{%if item.real_project is not none: %}
+                                            {{ '%0.2f'|format(item.real_project|float) }}</td>
+                                            {%endif%}
+                                        <td>{%if item.performance is not none: %}
+                                            {{ '%0.2f'|format(item.performance|float) }}</td>
+                                            {%endif%}
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                {%for item_code in code:%}
+                <div class="col-md-6">
+                    <div class="card ">
+                        <div class="card-header">
+                            <h4 class="card-title">S-Curve Project - {{ item_code }}</h4>
+                            <p class="card-category">S-Curve of Selected Project [{{ item_code }}]</p>
+                        </div>
+                        <div class="card-body ">
+                            <div id="{{ item_code.replace('.','') }}" name= 's-curve' data-id={{ item_code }} class="ct-chart"></div>
+                        </div>
+                        <div class="card-footer ">
+                            <div class="legend">
+                                <i class="fa fa-circle text-info"></i> Plan (%)
+                                <i class="fa fa-circle text-danger"></i> Realisasi (%)
+                            </div>
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-check"></i> Data information certified
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+                <div class="col-md-6">
+                    <div class="card  card-tasks">
+                        <div class="card-header ">
+                            <h4 class="card-title">Tasks</h4>
+                            <p class="card-category">Backend development</p>
+                        </div>
+                        <div class="card-body ">
+                            <div class="table-full-width">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" value="">
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Sign contract for "What are conference organizers afraid of?"</td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" value="" checked>
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Lines From Great Russian Literature? Or E-mails From My Boss?</td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" value="" checked>
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+                                            </td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Create 4 Invisible User Experiences you Never Knew About</td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" value="">
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Read "Following makes Medium better"</td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="form-check">
+                                                    <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" value="" disabled>
+                                                        <span class="form-check-sign"></span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>Unfollow 5 enemies from twitter</td>
+                                            <td class="td-actions text-right">
+                                                <button type="button" rel="tooltip" title="Edit Task" class="btn btn-info btn-simple btn-link">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                                <button type="button" rel="tooltip" title="Remove" class="btn btn-danger btn-simple btn-link">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="now-ui-icons loader_refresh spin"></i> Updated 3 minutes ago
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        demo.initDashboardPageCharts();
+        var elements = document.getElementsByName( 's-curve' );
+        for (var i=0; i<elements.length; i++) {
+            var id = elements[i].getAttribute( 'data-id' );
+            showchart(id)
+        }
+    });
+
+    function showchart(code)
+    {
+        $.ajax({
+            type: "POST",
+            url: "/getSCurve",
+            data: JSON.stringify(code),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                displayChart(code,result);    
+            } 
+        });
+    }
+
+    function displayChart(code,datas)
+    {   
+        id='#' + code.replace('.','');
+        Chartist.Line(id, {
+        labels: datas['labels'],
+        series: [
+            datas['dataset1'],
+            datas['dataset2']
+        ]
+        }, {
+        fullWidth: true,
+        chartPadding: {
+            right: 40
+        }
+        });
+    }
+</script>
+
+{% endblock javascripts %}

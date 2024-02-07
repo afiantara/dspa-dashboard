@@ -1,0 +1,83 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Tables {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card strpied-tabled-with-hover">
+                        <div class="card-header ">
+                            <h4 class="card-title">Project List</h4>
+                            <p class="card-category">List of registered project</p>
+                        </div>
+                        <div class="card-body table-full-width table-responsive">
+                            <table class="table table-hover table-striped" id="proyek">
+                                <thead>
+                                    <th>No</th>
+                                    <th>Kode</th>
+                                    <th>Deskripsi Kegiatan</th>
+                                    <th>Tanggal Mulai</th>
+                                    <th>Tanggal Selesai</th>
+                                    <th>Plan (%)</th>
+                                    <th>Realization (%)</th>
+                                    <th>Pencapaian (%)</th>
+                                    <th scope="col">ACTION</th>
+                                </thead>
+                                <tbody>
+                                    {%for item in proyek%}
+                                    <tr>
+                                        <td>{{ item.id_project }}</td>
+                                        <td>{{ item.code_project }}</td>
+                                        <td>{{ item.desc_project }}</td>
+                                        <td>{{ item.start_date }}</td>
+                                        <td>{{ item.end_date }}</td>
+                                        <td>{%if item.plan_project is not none: %}
+                                            {{ '%0.2f'|format(item.plan_project|float) }}</td>
+                                            {%endif%}
+                                        <td>{%if item.real_project is not none: %}
+                                            {{ '%0.2f'|format(item.real_project|float) }}</td>
+                                            {%endif%}
+                                        <td>{%if item.performance is not none: %}
+                                            {{ '%0.2f'|format(item.performance|float) }}</td>
+                                            {%endif%}
+                                        <td>
+                                            <a href="{{ url_for('projects_blueprint.delete_proyek', proyekid=item.id_project) }}"
+                                            onclick="return confirm('Do you want to permanently delete selected project {{ merchant }}?');" title="Delete Selected Project">
+                                            <i class="material-icons" style="font-size:16px">delete</i></a>
+                                        </td>
+                                    </tr>
+                                    {%endfor%}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        $('#proyek').DataTable({
+        columns: [
+          null,
+          {searchable: false},
+          {orderable: false, searchable: false},
+          {orderable: false, searchable: false},
+          null],
+      });
+        //demo.showNotification();
+    });
+</script>
+{% endblock javascripts %}

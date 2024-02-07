@@ -1,0 +1,111 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Register Project {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Register Proyek</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="/registerproyek">
+                                <div class="row">
+                                    <div class="col-md-5 pr-1">
+                                        <div class="form-group">
+                                            <label>Kode Proyek</label>
+                                            <input type="text" id='code_project' name='code_project' class="form-control"  placeholder="Kode Proyek" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Deskripsi Proyek</label>
+                                            <textarea id='desc_project' name='desc_project' rows="20" cols="100" class="form-control" placeholder="desc_project" value=""></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Jenis Kegiatan</label>
+                                            <div class="dropdown">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-info btn-md dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                                        Jenis Kegiatan
+                                                    </button>
+                                                    <input type="hidden" id="jenis_kegiatan" name="jenis_kegiatan" class="form-control"  value="">        
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        {% for datum in rkat %}
+                                                        <a class="dropdown-item"  href="#">{{ datum }}</a>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Tanggal Mulai</label>
+                                            <input type='date' id='start_date' name='start_date' class="form-control" placeholder="Tanggal Mulai" value=""></input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Tanggal Selesai</label>
+                                            <input type='date' id='end_date' name='end_date' class="form-control" placeholder="Tanggal Selesai" value=""></input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-11 pr-1">
+                                        <div class="form-group">
+                                            <label>Tahun Proyek</label>
+                                            <input type="number" id='year_project' name='year_project' class="form-control" placeholder="year_project" value={{ tahun }}></input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button name="registerproyek" type="submit" class="btn btn-info btn-fill pull-right">Register</button>
+                                <br>
+
+                                <div class="clearfix"></div>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+    });
+</script>
+<script>
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        $("#jenis_kegiatan").val($(this).text());
+    });
+</script>
+
+{% endblock javascripts %}

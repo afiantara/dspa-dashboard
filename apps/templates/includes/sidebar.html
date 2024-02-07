@@ -1,0 +1,166 @@
+<div class="sidebar" data-image="{{ config.ASSETS_ROOT }}/img/sidebar-5.jpg">
+    <!--
+Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+
+Tip 2: you can also add an image using data-image tag
+-->
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="/" class="simple-text">
+                DSPA Dashboard Monitoring
+            </a>
+        </div>
+        <ul class="nav">
+            {% if current_user.is_authenticated %}
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/">
+                    <i class="nc-icon nc-chart-pie-35"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+            
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/news.html">
+                    <i class="nc-icon nc-paper-2"></i>
+                    <p>News Analysis</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/trend.html">
+                    <i class="nc-icon nc-chart-bar-32"></i>
+                    <p>Trend Analysis</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/individual.html">
+                    <i class="nc-icon nc-badge"></i>
+                    <p>Individual Analysis</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/industrial.html">
+                    <i class="nc-icon nc-bank"></i>
+                    <p>Industrial Analysis</p>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <i class="nc-icon nc-vector"></i> 
+                   <span class="no-icon">Model Analysis</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('tools_blueprint.predictme') }}">
+                        <span class="no-icon">Predict Model</span>
+                    </a>
+                </div>
+            </li>    
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <i class="nc-icon nc-settings-gear-64"></i> 
+                   <span class="no-icon">Tools</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('tools_blueprint.showpyg') }}">
+                        <span class="no-icon">Pygwalker Data Analysis</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('tools_blueprint.showdtale') }}">
+                        <span class="no-icon">Dtale Data Analysis</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('tools_blueprint.showml') }}">Machine Learning Model</a>
+                    <!--
+                    <a class="dropdown-item" href="#">Something</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="divider"></div>
+                    <a class="dropdown-item" href="#">Separated link</a>
+                    -->    
+                </div>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/industrial.html">
+                    <i class="nc-icon nc-paper-2"></i>
+                    <p>Peraturan</p>
+                </a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <i class="nc-icon nc-grid-45"></i> 
+                   <span class="no-icon">Master</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('projects_blueprint.master_proyek') }}">
+                        <span class="no-icon">Pengelolaan Proyek</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('projects_blueprint.master_proyek') }}">
+                        <span class="no-icon">Pengelolaan User</span>
+                    </a>
+                    <!--
+                    <a class="dropdown-item" href="#">Something</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <div class="divider"></div>
+                    <a class="dropdown-item" href="#">Separated link</a>
+                    -->    
+                </div>
+            </li>
+            <!--
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/typography.html">
+                    <i class="nc-icon nc-paper-2"></i>
+                    <p>Typography</p>
+                </a>
+            </li>
+            -->
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/icons.html">
+                    <i class="nc-icon nc-atom"></i>
+                    <p>Icons</p>
+                </a>
+            </li>
+            <!--
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/maps.html">
+                    <i class="nc-icon nc-pin-3"></i>
+                    <p>Maps</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/notifications.html">
+                    <i class="nc-icon nc-bell-55"></i>
+                    <p>Notifications</p>
+                </a>
+            </li>
+            <li class="nav-item nav-item">
+                <a class="nav-link" href="/page-404.html">
+                    <i class="nc-icon nc-settings-gear-64"></i>
+                    <p>Error 404</p>
+                </a>
+            </li>
+            -->
+            <li>
+                <a class="nav-link" href="{{ url_for('authentication_blueprint.logout') }}">
+                    <i class="nc-icon nc-button-power"></i>
+                    <p>Logout</p>
+                </a>
+            </li>
+            
+            <li class="nav-item active active-pro">
+                <a class="nav-link active" target="_blank" 
+                   href="https://appseed.us/support/">
+                    <i class="nc-icon nc-spaceship"></i>
+                    <p>Support</p>
+                </a>
+            </li>
+            {% else %}
+            <li class="nav-item active">
+                <a class="nav-link active" target="_blank" 
+                   href="https://appseed.us/support/">
+                    <i class="nc-icon nc-spaceship"></i>
+                    <p>Support</p>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

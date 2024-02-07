@@ -1,0 +1,35 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Data Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <form action = "/uploaderdtale" method = "post" enctype="multipart/form-data">   
+                                <input type="file" name="file" />   
+                                <input type = "submit" value="Upload">   
+                            </form>
+                            <br />
+                            <p class="card-category">
+                                {{ data | safe }}
+                            </p>
+                            <br />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
