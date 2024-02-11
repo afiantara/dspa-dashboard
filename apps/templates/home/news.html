@@ -1,0 +1,80 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} News Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <form action='/search_news' name='getnews' id='getnews' method='post'> 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">News Analysis</h4>
+                            <p class="card-category">News Analysis by Duckduckgo...</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8 pr-1">
+                                    <div class="input-group">
+                                        <input type="search" name='search' id='search' class="form-control rounded" placeholder="Masukkan keyword berita yang ingin di analisis" aria-label="Search" aria-describedby="search-addon" value="{{ keywords }}"/>
+                                        <button type="submit" class="btn btn-info btn-fill pull-right" >search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="card-body">
+                                    <label>Model:</label>
+                                    <div class="dropdown">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-info btn-md dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                {% if selected_model %}
+                                                    {{ selected_model }}
+                                                {% else %}
+                                                    Model
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                {% for name, attr in my_dict.items() %}
+                                                    {% if selected_model==name %}
+                                                        <a class="dropdown-item" href="#" selected>{{ name }}</a>
+                                                    {% else %}
+                                                        <a class="dropdown-item" href="#">{{ name }}</a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        $("#model").val("{{ selected_model }}");
+    });   
+</script>
+<script type="text/javascript">
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        $("#model").val($(this).text());
+    });
+</script>
+<!-- Specific Page JS goes HERE  -->
+{% endblock javascripts %}

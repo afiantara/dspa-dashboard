@@ -1,0 +1,142 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} News Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"> -->
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <form action='/search_news' name='getnews' id='getnews' method='post'> 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">News Analysis</h4>
+                            <p class="card-category">News Analysis by Duckduckgo...</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8 pr-1">
+                                    <div class="input-group">
+                                        <input type="search" name='search' id='search' class="form-control rounded" placeholder="Masukkan keyword berita yang ingin di analisis" aria-label="Search" aria-describedby="search-addon" value="{{ keywords }}"/>
+                                        <button type="submit" class="btn btn-info btn-fill pull-right" >search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="card-body">
+                                    <label>Model:</label>
+                                    <div class="dropdown">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-info btn-md dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                {% if selected_model %}
+                                                    {{ selected_model }}
+                                                {% else %}
+                                                    Model
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                {% for name, attr in my_dict.items() %}
+                                                    {% if selected_model==name %}
+                                                        <a class="dropdown-item" id='selected_model' href="#" selected>{{ name }}</a>
+                                                    {% else %}
+                                                        <a class="dropdown-item" id='selected_model' href="#">{{ name }}</a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class='row'>
+                                        <div class="col-md-8 pr-1">
+                                            <div class="input-group">
+                                                <input type="hidden" id="model" name="model" class="form-control"  value="" />
+                                                <input type="input" name='category' id='category' class="form-control rounded" placeholder="Masukkan keyword sentiment ex:Positif, Negatif, Netral,etc.." aria-label="Search" aria-describedby="search-addon" value="{{ category }}"/>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {%if news%}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Results</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 pr-1">
+                                    <div class="card-body table-full-width table-responsive">
+                                        {{ pagination.info }}
+                                        <table id="example" class="table table-bordered table-striped" style="width:100%">
+                                            <thead>
+                                                <th>Date</th>
+                                                <th>Title</th>
+                                                <th>Content</th>
+                                                <th>URL</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for table in news %}
+                                                    <tr>
+                                                        <td>{{ table['date'].strftime('%Y-%m-%d') }}</td>
+                                                        <td>{{ table['title'] }}</td>
+                                                        <td>{{ table['body'] }}</td>
+                                                        <td><a href="{{ table['url'] }}">{{ table['url'] }}</a></td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {{ pagination.links }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Word Cloud of Analysis Sentiment</h4>
+                            <p class="card-category">Worldcloue analysis sentiment</p>
+                        </div>
+                        <div class="card-body">
+                            <img id="wordcloud" src="/static/assets/img/new_plot.png" alt="Chart" height="100%" width="100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Javascript method's body can be found in assets/js/demos.js
+        $("#model").val("{{ selected_model }}");
+    });   
+</script>
+<script type="text/javascript">
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        $("#model").val($(this).text());
+    });
+</script>
+<!-- Specific Page JS goes HERE  -->
+{% endblock javascripts %}

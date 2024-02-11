@@ -10,6 +10,9 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 
+#from dash_app.dash_individual import dash_app_individual
+#from dash_app.dash_industrial import dash_app_industrial
+
 db = SQLAlchemy(session_options={"autoflush": False})
 #db = SQLAlchemy()
 login_manager = LoginManager()
@@ -48,8 +51,13 @@ def configure_database(app):
 
 def create_app(config):
     app = Flask(__name__)
+    # functions having the dash applications
+    #dash_app_individual(app, path='/individual/')
+    #dash_app_industrial(app, path='/industrial/')
+    
     app.config.from_object(config)
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
+    
     return app
