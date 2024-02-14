@@ -174,9 +174,11 @@ def chart_visualize(df):
     plt.show()
 
 def plotly_visualize(df):
+    import json
+    import plotly
     import plotly.express as px
     fig = px.scatter(df, x="date", y="title")
-    fig.show()
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
 if __name__=="__main__":
     df = getnews()

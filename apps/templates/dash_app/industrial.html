@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Industrial Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="dashboard_graph">
+                      <div style="width: 100%; min-height:800px;" >
+                        <iframe 
+                          noresize='noresize' 
+                          style='position: absolute; background: transparent; width: 95%; height:100%;' 
+                          src={{ dash_url }}
+                          frameborder="0">
+                        </iframe>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

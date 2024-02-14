@@ -32,13 +32,14 @@ Tip 2: you can also add an image using data-image tag
                 </a>
             </li>
             <li class="nav-item nav-item">
-                <a class="nav-link" href="/individual/">
+                <a class="nav-link" href="{{ url_for('dash_app_blueprint.app1') }}">
                     <i class="nc-icon nc-badge"></i>
                     <p>Individual Analysis</p>
                 </a>
             </li>
+            
             <li class="nav-item nav-item">
-                <a class="nav-link" href="/industrial/">
+                <a class="nav-link" href="{{ url_for('dash_app_blueprint.app2') }}">
                     <i class="nc-icon nc-bank"></i>
                     <p>Industrial Analysis</p>
                 </a>
@@ -138,14 +139,13 @@ Tip 2: you can also add an image using data-image tag
                 </a>
             </li>
             -->
-            <li>
+            <li class="nav-item nav-item">
                 <a class="nav-link" href="{{ url_for('authentication_blueprint.logout') }}">
                     <i class="nc-icon nc-button-power"></i>
                     <p>Logout</p>
                 </a>
             </li>
-            
-            <li class="nav-item active active-pro">
+            <li class="nav-item nav-item">
                 <a class="nav-link active" target="_blank" 
                    href="https://appseed.us/support/">
                     <i class="nc-icon nc-spaceship"></i>

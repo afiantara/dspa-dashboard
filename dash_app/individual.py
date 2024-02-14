@@ -7,13 +7,17 @@ Takes into account the commodities.
 import pandas as pd
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
-from dash import Dash, html, dcc
+from dash import Dash,dcc,html
 from dash.dependencies import Input, Output
 from .preprocessing import clean_df
 from .components.table_categories import gen_table_categories, categories_dict
+import os
+url_base = '/dash/app1/'
 
 # DATAFRAME
-df = clean_df(pd.read_csv('data/commodity_trade_statistics_data.csv'))
+p  = os.path.join('datasets','commodity_trade_statistics_data_SAMPLE.csv')
+
+df = clean_df(pd.read_csv(p))
 
 # INPUT VALUES
 years = list(df.year.drop_duplicates())
@@ -32,7 +36,7 @@ colors_traces = [
     '#aaf0d1']
 
 
-def dash_app_commodities(flask_app, path):
+def dash_app_commodities(flask_app):
     """Launch Dash app on Flask server.
 
     Route for commodities page. It displays two plots, a bar plot having the
@@ -43,7 +47,7 @@ def dash_app_commodities(flask_app, path):
     app = Dash(
         __name__,
         server=flask_app,  # rendered by the flask app
-        url_base_pathname=path,  # the flask route for this page
+        url_base_pathname=url_base,  # the flask route for this page
         external_stylesheets=[dbc.themes.BOOTSTRAP]  # bootstrap components
     )
 
@@ -142,7 +146,7 @@ def dash_app_commodities(flask_app, path):
                             dbc.Button(
                                 'To countries',
                                 className='button-next'),
-                            href="/countries/",
+                            href="/dash/app2",
                             refresh=True,
                             style={'margin': '2%'})
                     ], className='buttons-container')

@@ -1,15 +1,17 @@
 """Script to render the Dash applicationtaking into account the countries."""
 
-from .dash_individual import Dash, html, dcc, pd, go, dbc, Input, Output
-from .dash_individual import years, categories_dict, df, clean_df
-from .dash_individual import colors_traces, flows
+from .individual import Dash, pd, go, dcc,html,dbc, Input, Output
+from .individual import years, categories_dict, df, clean_df
+from .individual import colors_traces, flows
 from .preprocessing import get_df_european_countries
 import math
+
+url_base = '/dash/app2/'
 
 # DATAFRAMES
 df = clean_df(df)
 df_europe = get_df_european_countries(
-    pd.read_csv('data/list-european-countries.csv'),
+    pd.read_csv('datasets/list-european-countries.csv'),
     df)
 
 # LISTS
@@ -18,7 +20,7 @@ countries_top_50 = list(df.groupby('country_or_area').sum().sort_values(
     ascending=False).head(50).index)
 
 
-def dash_app_countries(flask_app, path):
+def dash_app_countries(flask_app):
     """Launch Dash app on Flask server.
 
     Route for countries page. It displays two plots, a pie chart having
@@ -30,7 +32,7 @@ def dash_app_countries(flask_app, path):
     app = Dash(
         __name__,
         server=flask_app,  # rendered by the flask app
-        url_base_pathname=path,  # the flask route for this page
+        url_base_pathname=url_base,  # the flask route for this page
         external_stylesheets=[dbc.themes.BOOTSTRAP]   # bootstrap components
     )
 
@@ -149,7 +151,7 @@ def dash_app_countries(flask_app, path):
                             dbc.Button(
                                 'To commodities',
                                 className='button-next'),
-                            href="/commodities/",
+                            href="/dash/app1",
                             refresh=True,
                             style={'margin': '2%'})
                     ], className='buttons-container')

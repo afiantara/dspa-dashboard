@@ -10,9 +10,6 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 
-#from dash_app.dash_individual import dash_app_individual
-#from dash_app.dash_industrial import dash_app_industrial
-
 db = SQLAlchemy(session_options={"autoflush": False})
 #db = SQLAlchemy()
 login_manager = LoginManager()
@@ -23,7 +20,7 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    for module_name in ('authentication', 'home','projects','tools'):
+    for module_name in ('authentication', 'home','projects','tools','dash_app'):
         module = import_module('apps.{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
 
@@ -51,13 +48,16 @@ def configure_database(app):
 
 def create_app(config):
     app = Flask(__name__)
-    # functions having the dash applications
-    #dash_app_individual(app, path='/individual/')
-    #dash_app_industrial(app, path='/industrial/')
-    
+
     app.config.from_object(config)
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
+    
+    #add dash app
+    from dash_app import individual, industrial
+    
+    individual.dash_app_commodities(app)
+    industrial.dash_app_countries(app)
     
     return app

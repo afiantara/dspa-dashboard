@@ -100,9 +100,7 @@ def register():
 @blueprint.route('/logout')
 def logout():
     print('blueprint.route(/logout)')
-    
-    if session['keywords']:
-        session.pop('keywords', None)
+    session.pop('keywords', None)
     
     logout_user()
     return redirect(url_for('authentication_blueprint.login'))

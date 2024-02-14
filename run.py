@@ -11,6 +11,7 @@ from   sys import exit
 from apps.config import config_dict
 from apps import create_app, db
 
+
 # WARNING: Don't run with debug turned on in production!
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
@@ -26,6 +27,7 @@ except KeyError:
     exit('Error: Invalid <config_mode>. Expected values [Debug, Production] ')
 
 app = create_app(app_config)
+
 Migrate(app, db)
 
 if not DEBUG:
