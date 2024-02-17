@@ -13,6 +13,7 @@ import json
 from apps.home.news import getnews,sentiment_analysis,saveplot,plotly_visualize
 from flask_paginate import Pagination,get_page_args
 import os
+from  libs.trends import get_trend
 
 def getListProyek():
     list_code=[]
@@ -111,13 +112,12 @@ def sentimen_analisis(df,model,categories):
 def get_news(news,offset=0, per_page=5):
     return news[offset: offset + per_page]
 
-
 @blueprint.route('/news',methods= ['GET','POST'])
 @login_required
 def news():
     selected_model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
     my_dict = {"MoritzLaurer/mDeBERTa-v3-base-mnli-xnli": "tab1", "lxyuan/distilbert-base-multilingual-cased-sentiments-student": "tab2", "bert-base-indonesian-1.5G-finetuned-sentiment-analysis-smsa": "tab3"} 
-    return render_template('home/news.html', segment='news',
+    return render_template('home/news.html',         
         my_dict=my_dict,
         selected_model=selected_model,
         )
@@ -154,7 +154,7 @@ def search_news():
     
     graphJSON=plotly_visualize(news_ori)
     
-    return render_template('home/news.html', segment='news',keywords=keywords_ori,
+    return render_template('home/news.html',keywords=keywords_ori,
         news=pagination_news,
         page=page,
         per_page=per_page,
@@ -164,4 +164,29 @@ def search_news():
         category=categories_ori,
         graphJSON=graphJSON
         )
+
+@blueprint.route('/trend',methods= ['GET','POST'])
+@login_required
+def trend():
+    return render_template('home/trend.html')
+
+@blueprint.route('/search_trend',methods= ['GET','POST'])
+@login_required
+def search_trend():
+    if request.method=='POST':
+        keyword_orig= request.form['keywords']
+        print(f'keyword:',keyword_orig)
+        keywords = keyword_orig.split(',')
+        data_overtime,graphJSON_overtime,data_geo,graphJSON_geo,data_q,data_search,iframe= get_trend(keywords,'today 5-y','DMA','indonesia')
+        overtime = data_overtime.to_dict(orient='records')
     
+    return render_template('home/trend.html',
+        keywords = keyword_orig,
+        overtime = overtime,
+        graphJSON_overtime = graphJSON_overtime,
+        graphJSON_geo=graphJSON_geo,
+        data_geo = data_geo,
+        data_q = data_q,
+        data_search = data_search,
+        iframe=iframe,
+        )
