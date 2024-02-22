@@ -1,16 +1,12 @@
 import requests
 import pandas as pd
-import plotly.graph_objects as go
-import plotly.express as px
 import folium
 import geopandas as gpd
 # indonesia geojson
 geojson = requests.get(
     "https://github.com/thetrisatria/geojson-indonesia/blob/master/province/id-jk.geojson"
 ).json()
-geo_json_data = requests.get(
-    "https://raw.githubusercontent.com/python-visualization/folium-example-data/main/us_states.json"
-).json()
+
 
 def prepare():
     # Import GeoJSON Data

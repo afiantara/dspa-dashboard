@@ -10,9 +10,6 @@ from flask_login import login_required
 import pygwalker as pyg
 import pandas as pd
 
-from dtale.app import build_app, initialize_process_props
-from dtale.views import startup
-from dtale.utils import build_url
 import dtale
 from pycaret.classification import *
 import pathlib
@@ -36,16 +33,6 @@ def uploaderpyg():
         walker = pyg.walk(df, return_html=True,hideDataSourceConfig=False)
         return render_template('tools/pygwalker.html',data=walker)
 
-@blueprint.route('/uploaderdtale', methods = ['GET', 'POST'])
-@login_required
-def uploaderdtale():
-    if request.method == 'POST':
-        f = request.files['file']
-        f.save(f.filename)
-        df = pd.read_csv (f.filename)
-        instance = startup(data=df, ignore_duplicate=True)
-        return render_template('tools/dtale.html',data=instance._data_id, code=302)
-
 @blueprint.route('/showpyg')
 @login_required
 def showpyg():
@@ -60,10 +47,8 @@ def showpyg():
 @login_required
 def showdtale():
     print('tools-route_default')
-    data = ['welcome']
-    df=pd.DataFrame(data,columns=['word'])
-    d = dtale.show(df)
-    return render_template('tools/dtale.html',data=d)
+    _url = 'http://localhost:9000'
+    return render_template('tools/dtale.html',data=_url)
 
 @blueprint.route('/showml')
 @login_required

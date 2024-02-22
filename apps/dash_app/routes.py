@@ -11,4 +11,6 @@ def app1():
 @blueprint.route('/app2')
 @login_required
 def app2():
-    return render_template('dash_app/industrial.html', dash_url = industrial.url_base)
+    from libs.map_industrial import do_map
+    iframe = do_map()
+    return render_template('dash_app/industrial.html', dash_url = industrial.url_base,iframe=iframe)

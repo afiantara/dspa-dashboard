@@ -13,13 +13,15 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <form action = "/uploaderdtale" method = "post" enctype="multipart/form-data">   
-                                <input type="file" name="file" />   
-                                <input type = "submit" value="Upload">   
-                            </form>
-                            <br />
                             <p class="card-category">
-                                {{ data | safe }}
+                                <iframe
+                                    width="100%"
+                                    height ="980px"
+                                    src= "{{ data | safe }}"
+                                    frameborder="0"
+                                    allow = "clipboard-read;clipboard-write"
+                                    allowfullscreen>
+                                </iframe>
                             </p>
                             <br />
                         </div>
