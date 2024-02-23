@@ -134,8 +134,9 @@ def getnews(kwrds):
             })
     
     df =pd.DataFrame(results)
-    df['date']=pd.to_datetime(df['date'])
-    df=df.sort_values(by='date')
+    if df.shape[0]!=0:
+        df['date']=pd.to_datetime(df['date'])
+        df=df.sort_values(by='date')
     return df
 
 def chart_visualize(df):

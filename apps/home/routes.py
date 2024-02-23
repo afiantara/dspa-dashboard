@@ -135,15 +135,18 @@ def search_news():
         selected_model=request.form['model']
         
         news_ori = getnews(keywords)
-        news_ori = news_ori.sort_values(by=['date'],ascending=False)
-        news = news_ori.to_dict(orient='records')
-        page, per_page, offset = get_page_args(page_parameter='page',
-                                        per_page_parameter='per_page')
-        total = len(news)
-        pagination_news = get_news(news,offset=offset, per_page=per_page)
-    
-        pagination = Pagination(page=page, per_page=per_page, total=total,
-                        css_framework='bootstrap4')
+        if (news_ori.shape[0]==0):
+            return render_template('home/page-data-not-found.html'), 404
+        else:
+            news_ori = news_ori.sort_values(by=['date'],ascending=False)
+            news = news_ori.to_dict(orient='records')
+            page, per_page, offset = get_page_args(page_parameter='page',
+                                            per_page_parameter='per_page')
+            total = len(news)
+            pagination_news = get_news(news,offset=offset, per_page=per_page)
+        
+            pagination = Pagination(page=page, per_page=per_page, total=total,
+                            css_framework='bootstrap4')
     
     if not selected_model:
         selected_model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
