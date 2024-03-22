@@ -57,9 +57,9 @@ def create_app(config):
     configure_database(app)
     
     #add dash app
-    from dash_app import individual, industrial
+    from dash_app import individual02,industrial02
     
-    individual.dash_app_commodities(app)
-    industrial.dash_app_countries(app)
+    individual02.dash_app_individual(app)
+    industrial02.dash_app_industry(app)
     
     return app

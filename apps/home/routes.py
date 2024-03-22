@@ -10,7 +10,10 @@ from jinja2 import TemplateNotFound
 from apps import db
 from apps.projects.models import UpdateProgress,Projects,UpdateProgressHist
 import json
-from apps.home.news import getnews,sentiment_analysis,saveplot,plotly_visualize
+from apps.home.news import getnews,sentiment_analysis,saveplot, \
+    plotly_visualize,get_news_from_db,sentimen_analisis_NPN,plotly_sentiment_visualize, \
+    getWordCloudVader,sentimen_analisis_NPN_Roberta
+
 from flask_paginate import Pagination,get_page_args
 import os
 from  libs.trends import get_trend
@@ -34,7 +37,6 @@ def getListProyek():
 @blueprint.route('/getSCurve', methods=['GET', 'POST'])
 @login_required
 def getSCurve():
-    print('getSCurve')
     if request.method == "POST":
         code= request.get_json()
         print(f'code: ',code)
@@ -106,7 +108,7 @@ def get_segment(request):
 
 def sentimen_analisis(df,model,categories):
     wordcloud =sentiment_analysis(df,model,categories)
-    target= os.path.join('apps','static','assets','img','new_plot.png')
+    target= os.path.join('apps','static','assets','img','sentiment_analisis.png')
     saveplot(wordcloud,target)
 
 def get_news(news,offset=0, per_page=5):
@@ -126,47 +128,66 @@ def news():
 @blueprint.route('/search_news',methods= ['GET','POST'])
 @login_required
 def search_news():
-    
+    news=None
+    keywords_ori=None
     if request.method=='POST':
         keywords_ori=request.form['search']
+        session['keywords']=keywords_ori
         keywords = keywords_ori.split(',')
-        categories_ori=request.form['category']
-        categories=categories_ori.split(',')
-        selected_model=request.form['model']
-        
-        news_ori = getnews(keywords)
-        if (news_ori.shape[0]==0):
+        #categories_ori=request.form['category']
+        #categories=categories_ori.split(',')
+        #selected_model=request.form['model']
+        if keywords=='':
             return render_template('home/page-data-not-found.html'), 404
-        else:
-            news_ori = news_ori.sort_values(by=['date'],ascending=False)
-            news = news_ori.to_dict(orient='records')
-            page, per_page, offset = get_page_args(page_parameter='page',
-                                            per_page_parameter='per_page')
-            total = len(news)
-            pagination_news = get_news(news,offset=offset, per_page=per_page)
+
+        print(keywords)
+        news_ori= getnews(keywords)
         
-            pagination = Pagination(page=page, per_page=per_page, total=total,
-                            css_framework='bootstrap4')
-    
-    if not selected_model:
-        selected_model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
+    if None is keywords_ori:
+        keywords_ori=session['keywords']
+
+    if  None is news :
+        news_ori = get_news_from_db()
+
+    #doing sentiment analysis NPN and display in grid and chart
+
+    news_ori=sentimen_analisis_NPN(news_ori)
+
+    if (news_ori.shape[0]==0):
+        return render_template('home/page-data-not-found.html'), 404
     else:
-        sentimen_analisis(news_ori,selected_model,categories)    
-    
-    my_dict = {"MoritzLaurer/mDeBERTa-v3-base-mnli-xnli": "tab1", "lxyuan/distilbert-base-multilingual-cased-sentiments-student": "tab2", "bert-base-indonesian-1.5G-finetuned-sentiment-analysis-smsa": "tab3"} 
-    
+        news_ori = news_ori.sort_values(by=['date'],ascending=False)
+        news = news_ori.to_dict(orient='records')
+
+    page, per_page, offset = get_page_args(page_parameter='page',
+                                    per_page_parameter='per_page')
+    total = len(news)
+    pagination_news = get_news(news,offset=offset, per_page=per_page)
+
+    pagination = Pagination(page=page, per_page=per_page, total=total,
+                    css_framework='bootstrap4')
+
+    #convert to dataframe from dictionary
     graphJSON=plotly_visualize(news_ori)
+    graphSentimentJSON=plotly_sentiment_visualize(news_ori)
+
+    getWordCloudVader(news_ori)
+    #if not selected_model:
+    #    selected_model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
+    #else:
+    #    sentimen_analisis(news_ori,selected_model,categories)    
     
-    return render_template('home/news.html',keywords=keywords_ori,
+    #my_dict = {"MoritzLaurer/mDeBERTa-v3-base-mnli-xnli": "tab1", "lxyuan/distilbert-base-multilingual-cased-sentiments-student": "tab2", "bert-base-indonesian-1.5G-finetuned-sentiment-analysis-smsa": "tab3"} 
+    return render_template('home/news.html',
+        keywords=keywords_ori,
         news=pagination_news,
         page=page,
         per_page=per_page,
         pagination=pagination,
-        my_dict=my_dict,
-        selected_model=selected_model,
-        category=categories_ori,
-        graphJSON=graphJSON
+        graphJSON=graphJSON,
+        graphSentimentJSON=graphSentimentJSON
         )
+
 
 @blueprint.route('/trend',methods= ['GET','POST'])
 @login_required

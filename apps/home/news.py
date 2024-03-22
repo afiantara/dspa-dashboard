@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 #initialize to store the result of searching
 results=[]
 keywords =['"warnaartha life"','"asuransi"']
+#db_name='../../datasets/news.db'
+db_name='./datasets/news.db'
+table_name = "news"
     #,'"Pertumbuhan premi"','"Tingkat penetrasi"','"Kinerja perusahaan"','"Regulasi"','"Inovasi produk"']
 
 def drawit(df):
@@ -13,11 +16,184 @@ def drawit(df):
     fig = px.scatter(x=df.date, y=df.title, labels={'x':'News Timeline', 'y':'Title'}) # override keyword names with labels
     fig.show()
 
+
+def sentimen_analisis_shopee():
+    from google_play_scraper import Sort, reviews
+    from google_play_scraper import app
+    import numpy as np
+
+    plt.style.use('ggplot')
+    result, continuation_token = reviews(
+        'com.shopee.id',
+        lang='id', 
+        country='id',
+        sort=Sort.MOST_RELEVANT, 
+        count=10000, 
+        filter_score_with= None  
+    )
+
+    # Dataframe dengan nama 
+    dfs = pd.DataFrame(np.array(result),columns=['review'])
+    dfs = dfs.join(pd.DataFrame(dfs.pop('review').tolist()))
+    dfs.head()
+
+    from nltk.sentiment import SentimentIntensityAnalyzer
+    from tqdm.notebook import tqdm
+    import nltk
+    
+    nltk.downloader.download('vader_lexicon')
+    sia = SentimentIntensityAnalyzer()
+
+    # Run the polarity score on the entire dataset
+    res = {}
+    for i, row in tqdm(dfs.iterrows(), total=len(dfs)):
+        text = row['content']
+        myid = row['reviewId']
+        res[myid] = sia.polarity_scores(text)
+
+    vaders = pd.DataFrame(res).T
+    vaders.reset_index()
+    vaders = vaders.reset_index().rename(columns={'index': 'reviewId'})
+    vaders = vaders.merge(dfs, how='left')
+
+    vaders['sentiment'] = np.where(vaders['compound']>0.2 , 'Positive',
+                                np.where(vaders['compound']<0 , 'Negative', 'Neutral'))
+    ax = vaders['sentiment'].value_counts().sort_index() \
+        .plot(kind='bar',
+            title='Shopee Review Sentiment',
+            figsize=(5, 5))
+    ax.set_xlabel('Review Sentiment')
+    plt.show()
+
+
+
+def sentimen_analisis_NPN_Roberta(df):
+    from transformers import AutoTokenizer
+    from transformers import AutoModelForSequenceClassification
+    from scipy.special import softmax
+    from nltk.sentiment import SentimentIntensityAnalyzer
+    from tqdm.notebook import tqdm
+    import nltk
+
+    import uuid
+    import numpy as np
+    
+
+    MODEL = f"cardiffnlp/twitter-roberta-base-sentiment"
+    tokenizer = AutoTokenizer.from_pretrained(MODEL)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL)
+
+    def polarity_scores_roberta(example):
+        encoded_text = tokenizer(example, return_tensors='pt')
+        output = model(**encoded_text)
+        scores = output[0][0].detach().numpy()
+        scores = softmax(scores)
+        scores_dict = {
+            'roberta_neg' : scores[0],
+            'roberta_neu' : scores[1],
+            'roberta_pos' : scores[2]
+        }
+        return scores_dict
+
+    dfs = df.copy()
+    dfs['uuid'] = [uuid.uuid4() for _ in range(len(dfs.index))]
+    dfs.insert(0, 'uuid', dfs.pop('uuid'))
+
+    # Run the polarity score on the entire dataset
+    res = {}
+    for i, row in tqdm(dfs.iterrows(), total=len(dfs)):
+        text = row['body']
+        myid = row['uuid']
+        res[myid] = polarity_scores_roberta(text)
+
+    vaders = pd.DataFrame(res).T
+    vaders.reset_index()
+    vaders = vaders.reset_index().rename(columns={'index': 'uuid'})
+    print(vaders)
+    vaders = vaders.merge(dfs, how='left')
+    vaders['sentiment'] = np.where(vaders['compound']==0 , 'Neutral',
+                                np.where(vaders['compound']< 0 , 'Negative', 'Positive'))
+    
+    save_to_db(vaders,'./datasets/news_analysis.db','news_analisis')
+    return vaders
+
+def sentimen_analisis_NPN(df):
+    from nltk.sentiment import SentimentIntensityAnalyzer
+    from tqdm.notebook import tqdm
+    import nltk
+    import uuid
+    import numpy as np
+
+    nltk.downloader.download('vader_lexicon')
+    sia = SentimentIntensityAnalyzer()
+
+    dfs = df.copy()
+    dfs['uuid'] = [uuid.uuid4() for _ in range(len(dfs.index))]
+    dfs.insert(0, 'uuid', dfs.pop('uuid'))
+
+    # Run the polarity score on the entire dataset
+    res = {}
+    for i, row in tqdm(dfs.iterrows(), total=len(dfs)):
+        text = row['body']
+        myid = row['uuid']
+        res[myid] = sia.polarity_scores(text)
+
+    vaders = pd.DataFrame(res).T
+    vaders.reset_index()
+    vaders = vaders.reset_index().rename(columns={'index': 'uuid'})
+    vaders = vaders.merge(dfs, how='left')
+    vaders['sentiment'] = np.where(vaders['compound']==0 , 'Neutral',
+                                np.where(vaders['compound']< 0 , 'Negative', 'Positive'))
+    
+    save_to_db(vaders,'./datasets/news_analysis.db','news_analisis')
+    return vaders
+
+def getWordCloudVader(data):
+
+    data['body']=data['body'].astype(str)
+    data['body']=data['body'].str.lower()
+
+    import nltk
+    from nltk.corpus import stopwords
+    from nltk.stem import WordNetLemmatizer
+    from wordcloud import WordCloud
+    import re
+    import nltk
+    import os
+
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    nltk.download('omw-1.4')
+
+    #object of WordNetLemmatizer
+    lm = WordNetLemmatizer()
+
+    def text_transformation(vaders_col):
+        corpus = []
+        for item in vaders_col:
+            new_item = re.sub('[^a-zA-Z]',' ',str(item))
+            new_item = new_item.lower()
+            new_item = new_item.split()
+            new_item = [lm.lemmatize(word) for word in new_item if word not in set(stopwords.words('indonesian'))]
+            corpus.append(' '.join(str(x) for x in new_item))
+        return corpus
+    corpus = text_transformation(data['body'])
+    word_cloud = ""
+    for row in corpus:
+        for word in row:
+            word_cloud+=" ".join(word)
+    wordcloud = WordCloud(width = 1000, height = 500,background_color ='white',min_font_size = 10).generate(word_cloud)
+    plt.imshow(wordcloud)
+    plt.axis('off') # to off the axis of x and y
+    target= os.path.join('apps','static','assets','img','sentiment_news_analisis.png')
+    plt.savefig(target)
+
 def sentiment_analysis(df,model,cat):
     from transformers import pipeline
     from tensorflow.python.keras.engine import data_adapter
     df2 = df.copy()
-    df2['date'] = pd.to_datetime(df2['date']).dt.date
+    
+    #df2['date'] = pd.to_datetime(df2['date']).dt.date
     # Group by 'date' (only date part, time ignored) and merge the 'title' text
     df_time_title_merged = df2.groupby('date')['title'].agg(' '.join).reset_index()
 
@@ -52,7 +228,7 @@ def sentiment_analysis(df,model,cat):
     df_analysis = pd.DataFrame(analysis_results)
 
     # Display the new DataFrame
-    #print(df_analysis)
+    print(df_analysis)
 
     # Create a new DataFrame to store labels with scores greater than 0.5 ini user masukin
     filtered_labels = []
@@ -88,7 +264,20 @@ def displayworldcloud(wordcoud):
     plt.imshow(wordcoud, interpolation='bilinear')
     plt.axis('off')
     plt.show()
+
+def save_to_db(df,db,table):
+    import sqlite3
+    df.pop('uuid')
+    conn = sqlite3.connect('{}'.format(db)) # creates file
+    df.to_sql(table, conn, if_exists='replace', index=False) # writes to file
+
+def save_news_to_db(df):
+    import sqlite3
+
+    conn = sqlite3.connect('{}'.format(db_name)) # creates file
+    df.to_sql(table_name, conn, if_exists='replace', index=False) # writes to file
     
+
 def saveplot(wordcoud,path):
     import matplotlib
     matplotlib.use('Agg')
@@ -116,7 +305,9 @@ def getnews(kwrds):
         the_keywords=""
         for keyword in keywords:
             the_keywords+=keyword
-
+        
+        print(the_keywords)
+        
         ddgs_news_gen =ddgs.news(
             the_keywords,
             region='id-id',
@@ -137,6 +328,18 @@ def getnews(kwrds):
     if df.shape[0]!=0:
         df['date']=pd.to_datetime(df['date'])
         df=df.sort_values(by='date')
+        save_news_to_db(df)
+
+    return df
+
+def get_news_from_db():
+    import sqlite3
+    con = sqlite3.connect(db_name)
+    query='select * from {}'.format(table_name)
+    df=pd.read_sql_query(query, con)
+    df["date"] = pd.to_datetime(df["date"])
+    #print(df)
+    con.close()
     return df
 
 def chart_visualize(df):
@@ -174,22 +377,32 @@ def chart_visualize(df):
     # Display the plot
     plt.show()
 
-def plotly_visualize(df):
+def plotly_visualize(data):
     import json
     import plotly
     import plotly.express as px
+    df = pd.DataFrame.from_dict(data)
     fig = px.scatter(df, x="date", y="title")
     return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
+def plotly_sentiment_visualize(data):
+    import json
+    import plotly
+    import plotly.express as px
+    df = pd.DataFrame.from_dict(data)
+    fig = px.bar(df['sentiment'].value_counts().sort_index())
+    return json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
 if __name__=="__main__":
-    df = getnews()
-    plotly_visualize(df)
-
+    df = get_news_from_db()
+    #plotly_visualize(df)
     #drawit(df)
-    #sentiment_analysis(df)
+    #my_model = {"MoritzLaurer/mDeBERTa-v3-base-mnli-xnli": "tab1", "lxyuan/distilbert-base-multilingual-cased-sentiments-student": "tab2", "bert-base-indonesian-1.5G-finetuned-sentiment-analysis-smsa": "tab3"}
     
-
-
-    
-    
-
+    #model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
+    #cat=["kecurangan", "kriminal", "hukum", "dana", "korupsi", "keterbukaan", "kebebasan","ketakutan","optimis","masalah","kasus"]
+    #wordcloud=sentiment_analysis(df,model,cat)
+    #print(wordcloud)
+    #displayworldcloud(wordcloud)
+    #sentimen_analisis_shopee()
+    sentimen_analisis_NPN_Roberta(df)

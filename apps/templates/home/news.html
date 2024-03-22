@@ -26,37 +26,6 @@
                                         <input type="search" name='search' id='search' class="form-control rounded" placeholder="Masukkan keyword berita yang ingin di analisis" aria-label="Search" aria-describedby="search-addon" value="{{ keywords }}"/>
                                         <button type="submit" class="btn btn-info btn-fill pull-right" >search</button>
                                     </div>
-                                    <br />
-                                    <div class="input-group">
-                                        <input type="hidden" id="model" name="model" class="form-control"  value="" />
-                                        <input type="input" name='category' id='category' class="form-control rounded" placeholder="Masukkan keyword sentiment ex:Positif, Negatif, Netral,etc.." aria-label="Search" aria-describedby="search-addon" value="{{ category }}"/>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="card-body">
-                                    <label>Model:</label>
-                                    <div class="dropdown">
-                                        <div class="input-group-btn">
-                                            <button class="btn btn-info btn-md dropdown-toggle"  type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                {% if selected_model %}
-                                                    {{ selected_model }}
-                                                {% else %}
-                                                    Model
-                                                {% endif %}
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                {% for name, attr in my_dict.items() %}
-                                                    {% if selected_model==name %}
-                                                        <a class="dropdown-item" href="#" selected>{{ name }}</a>
-                                                    {% else %}
-                                                        <a class="dropdown-item" href="#">{{ name }}</a>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                             <div class="clearfix"></div>
@@ -64,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            {%if news%}
+            {%if news %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -79,6 +48,7 @@
                                         <table id="example" class="table table-bordered table-striped" style="width:100%">
                                             <thead>
                                                 <th>Date</th>
+                                                <th>Sentimen</th>
                                                 <th>Title</th>
                                                 <th>Content</th>
                                                 <th>URL</th>
@@ -87,9 +57,11 @@
                                                 {% for table in news %}
                                                     <tr>
                                                         <td>{{ table['date'].strftime('%Y-%m-%d') }}</td>
+                                                        <td>{{ table['sentiment'] }}</td>
                                                         <td>{{ table['title'] }}</td>
                                                         <td>{{ table['body'] }}</td>
-                                                        <td><a href="{{ table['url'] }}">{{ table['url'] }}</a></td>
+                                                        <td><a href="{{ table['url'] }}" target="_blank">{{ table['url'] }}</a></td>
+                                                        
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>
@@ -106,8 +78,21 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header ">
-                            <h4 class="card-title">Chart Analysis</h4>
-                            <p class="card-category">Chart Analysis</p>
+                            <h4 class="card-title">Sentiment News Analysis</h4>
+                            <p class="card-category">Sentiment News Analysis [Positive,Neutral, and Negative]</p>
+                        </div>
+                        <div class="card-body">
+                            <div id='sentiment_chart' class='chart'></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Chart News Analysis</h4>
+                            <p class="card-category">Chart News Analysis</p>
                         </div>
                         <div class="card-body">
                             <div id='chart' class='chart'></div>
@@ -115,16 +100,15 @@
                     </div>
                 </div>
             </div>
-            
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header ">
-                            <h4 class="card-title">Word Cloud of Analysis Sentiment</h4>
-                            <p class="card-category">Worldcloud analysis sentiment</p>
+                            <h4 class="card-title">Worldcloud News analysis sentiment</h4>
+                            <p class="card-category">Word Cloud of News Analysis Sentiment</p>
                         </div>
                         <div class="card-body">
-                            <img id="wordcloud" src="/static/assets/img/new_plot.png" alt="Chart" height="100%" width="100%">
+                            <img id="wordcloud" src="/static/assets/img/sentiment_news_analisis.png" alt="Chart" height="100%" width="100%">
                         </div>
                     </div>
                 </div>
@@ -141,9 +125,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
         // Javascript method's body can be found in assets/js/demos.js
-        $("#model").val("{{ selected_model }}");
+        //$("#model").val("{{ selected_model }}");
         var graphs = {{ graphJSON | safe}};
         Plotly.plot('chart',graphs,{});
+        
+        var graphs = {{ graphSentimentJSON | safe}};
+        Plotly.plot('sentiment_chart',graphs,{});
     });   
 </script>
 <script type="text/javascript">

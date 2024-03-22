@@ -108,7 +108,6 @@ def getListProyek():
 @blueprint.route('/registerproyek', methods=['GET', 'POST'])
 @login_required
 def registerproyek():
-    print('registerproyek')
     project_form = ProjectForm(request.form)
     if 'registerproyek' in request.form:
         kode = request.form['code_project']

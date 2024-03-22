@@ -1,0 +1,369 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Individual Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Analisis Kinerja Perusahaan Asuransi</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_RBC' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_RKI' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="card">
+                      <div class="card-header ">
+                          <h4 class="card-title">Top 10 Gainer Perusahaan Asuransi Jiwa</h4>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10RBC' class='chart'></div>
+                              </div>
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10RKI' class='chart'></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="card">
+                      <div class="card-header ">
+                          <h4 class="card-title">Top 10 Looser Perusahaan Asuransi Jiwa</h4>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10LRBC' class='chart'></div>
+                              </div>
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10LRKI' class='chart'></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="card">
+                      <div class="card-header ">
+                          <h4 class="card-title">Top 10 Gainer Perusahaan Asuransi Umum</h4>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10RBCAU' class='chart'></div>
+                              </div>
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10RKIAU' class='chart'></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                  <div class="card">
+                      <div class="card-header ">
+                          <h4 class="card-title">Top 10 Looser Perusahaan Asuransi Umum</h4>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10LRBCAU' class='chart'></div>
+                              </div>
+                              <div class="col-md-6 pr-1">
+                                  <div id='chart_Top10LRKIAU' class='chart'></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Perusahaan Asuransi RBC di bawah 120% atau RKI di Bawah 100%</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12 pr-1">
+                                    <div id='chart_InsolvenRBC' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 pr-1">
+                                    <div id='chart_InsolvenRKI' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Analisis Kinerja Industri Asuransi (Rasio)</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="card-body">
+                                    <div class="dropdown">
+                                        <div class="input-group-btn">
+                                            <button class="btn btn-info btn-md dropdown-toggle"  type="button" id="year" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                {% if selected_year %}
+                                                    {{ selected_year }}
+                                                {% else %}
+                                                    Periode Mulai
+                                                {% endif %}
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                {% for year in years: %}
+                                                    <a class="dropdown-item" id='{{ year }}' href="#" selected>{{ year }}</a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_rasioRBCAvg' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_rasioRKIAvg' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_rasioLiqAvg' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_rasioRPHIAvg' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_rasioRBPNAvg' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Analisis Rasio</h4>
+                        </div>
+                        <div class="card-body">
+                            <div  class="d-flex flex-row bd-highlight mb-3">
+                                <div class="dropdown">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-info btn-md dropdown-toggle"  id="left_ratio" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {% if selected_rasio_left %}
+                                                {{ selected_rasio_left }}
+                                            {% else %}
+                                                Pilih Rasio
+                                            {% endif %}
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {%if ratio_names %}
+                                            {% for ratio_name  in ratio_names: %}
+                                                <a class="dropdown-item" id='{{ ratio_name }}' href="#" selected>{{ ratio_name }}</a>
+                                            {% endfor %}
+                                            {%endif%}
+                                        </div>
+                                    </div>
+                                </div>
+                                <span id="spanStage">&nbsp;&nbsp;versus&nbsp;&nbsp;</span>
+                                <div class="dropdown">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-info btn-md dropdown-toggle"  type="button" id="right_ratio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {% if selected_rasio_right %}
+                                                {{ selected_rasio_right }}
+                                            {% else %}
+                                                Pilih Rasio
+                                            {% endif %}
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            {%if ratio_names %}
+                                            {% for ratio_name in ratio_names: %}
+                                                <a class="dropdown-item" id='{{ ratio_name }}' href="#" selected>{{ ratio_name }}</a>
+                                            {% endfor %}
+                                            {%endif%}
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id='compare_btn' class="btn btn-primary">Tampilkan</button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 pr-1">
+                                    <div id='chart_compare' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Clustering Rasio</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_clustering_aj' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_clustering_au' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ config.ASSETS_ROOT }}/js/plotly-latest.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var graphs = {{json_RBC | safe}};
+        Plotly.plot('chart_RBC',graphs,{});
+        graphs = {{json_RKI | safe}};
+        Plotly.plot('chart_RKI',graphs,{});
+        graphs = {{json_Top10RBC | safe}};
+        Plotly.plot('chart_Top10RBC',graphs,{});
+        graphs = {{json_Top10RKI | safe}};
+        Plotly.plot('chart_Top10RKI',graphs,{});
+        graphs = {{json_Top10LRBC | safe}};
+        Plotly.plot('chart_Top10LRBC',graphs,{});
+        graphs = {{json_Top10LRKI | safe}};
+        Plotly.plot('chart_Top10LRKI',graphs,{});
+
+        graphs = {{json_Top10RBCAU | safe}};
+        Plotly.plot('chart_Top10RBCAU',graphs,{});
+        graphs = {{json_Top10RKIAU | safe}};
+        Plotly.plot('chart_Top10RKIAU',graphs,{});
+        graphs = {{json_Top10LRBCAU | safe}};
+        Plotly.plot('chart_Top10LRBCAU',graphs,{});
+        graphs = {{json_Top10LRKIAU | safe}};
+        Plotly.plot('chart_Top10LRKIAU',graphs,{});
+
+        graphs = {{json_InsolvenRBC | safe}};
+        Plotly.plot('chart_InsolvenRBC',graphs,{});
+        graphs = {{json_InsolvenRKI | safe}};
+        Plotly.plot('chart_InsolvenRKI',graphs,{});
+
+        graphs = {{json_rasioRBCAvg | safe}};
+        Plotly.plot('chart_rasioRBCAvg',graphs,{});
+        graphs = {{json_rasioRKIAvg | safe}};
+        Plotly.plot('chart_rasioRKIAvg',graphs,{});
+        graphs = {{json_rasioLiqAvg | safe}};
+        Plotly.plot('chart_rasioLiqAvg',graphs,{});
+        graphs = {{json_rasioRPHIAvg | safe}};
+        Plotly.plot('chart_rasioRPHIAvg',graphs,{});
+        graphs = {{json_rasioRBPNAvg | safe}};
+        Plotly.plot('chart_rasioRBPNAvg',graphs,{});
+
+        graphs = {{json_graph_cluster_aj | safe}};
+        Plotly.plot('chart_clustering_aj',graphs,{});
+
+        graphs = {{json_graph_cluster_au | safe}};
+        Plotly.plot('chart_clustering_au',graphs,{});
+
+
+    });   
+</script>
+
+<script>
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        var id=$(this).parents(".input-group-btn").find('.btn').attr('id')
+        if (id != 'year') 
+            return;
+        year =$(this).text();
+        $.ajax({
+            type: "POST",
+            url: "/getratio",
+            data: JSON.stringify(year),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                displayChartRasio(result) 
+            } 
+        });
+    });
+
+    function displayChartRasio(ret)
+    {
+        var graphs = JSON.parse(ret['json_rasioRBCAvg']);
+        Plotly.react('chart_rasioRBCAvg',graphs,{});
+        graphs = JSON.parse(ret['json_rasioRKIAvg']);
+        Plotly.react('chart_rasioRKIAvg',graphs,{});
+        graphs = JSON.parse(ret['json_rasioLiqAvg']);
+        Plotly.react('chart_rasioLiqAvg',graphs,{});
+        graphs = JSON.parse(ret['json_rasioRPHIAvg']);
+        Plotly.react('chart_rasioRPHIAvg',graphs,{});
+        graphs = JSON.parse(ret['json_rasioRBPNAvg']);
+        Plotly.react('chart_rasioRBPNAvg',graphs,{});
+    }
+
+    $("#compare_btn").click(function(e) {
+            
+            left_ratio =$("#left_ratio").text();
+            right_ratio =$("#right_ratio").text();
+            let toPost = {
+                left_ratio: left_ratio,
+                right_ratio: right_ratio
+            };
+            let jsonStr = JSON.stringify(toPost);
+            $.ajax({
+                type: "POST",
+                url: "/getCompareRatio",
+                data: jsonStr,
+                contentType: "application/json",
+                dataType: 'json',
+                success: function(result) {
+                    var graphs = JSON.parse(result['json_result']);
+                    Plotly.react('chart_compare',graphs,{});
+                }
+            });
+        });
+</script>
+
+<!-- Specific Page JS goes HERE  -->
+{% endblock javascripts %}

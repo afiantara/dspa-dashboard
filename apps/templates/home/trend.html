@@ -74,7 +74,8 @@
     </div>
 {% endblock content %}
 {% block javascripts %}
-<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+
+<script src="{{ config.ASSETS_ROOT }}/js/plotly-latest.min.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {

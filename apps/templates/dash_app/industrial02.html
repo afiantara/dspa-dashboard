@@ -1,0 +1,234 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Industrial Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header ">
+                        <h4 class="card-title">Pertumbuhan Perusahaan Asuransi</h4>
+                        <p class="card-category">Pertumbuhan Perusahaan Asuransi</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12 pr-1">
+                            <div id='chart_jumlah_asuransi' class='chart'></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header ">
+                        <h4 class="card-title">Peta Sebaran Kantor Cabang Perusahaan Asuransi</h4>
+                        <p class="card-category">Peta Sebaran Kantor Cabang Perusahaan Asuransi Per Provinsi</p>
+                    </div>
+                    <div class="card-body">
+                      <!--{{ iframe|safe }}-->
+                        <div id="map" name= 'map'></div>
+                        <div id="loading" style="height:80%;width:80%;">
+                            <center><img src="/static/assets/img/loading.svg" alt="Loading..." style="border: 0;
+                                border-radius: 4px;
+                                padding: 5px;
+                                background-color: transparent;
+                                width: 200px;"></center>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Analisis Pertumbuhan Industri Asuransi</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_total_asset_growth' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_total_investment_growth' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_totalnetpremincomegrowth' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_totalpremincomegrowth' class='chart'></div>
+                                </div>
+                            </div>
+                            <div div class="row">
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_totalclaimbenefitgrowth' class='chart'></div>
+                                </div>
+                                <div class="col-md-6 pr-1">
+                                    <div id='chart_totalopexpensegrowth' class='chart'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Analisis Rasio Industri Asuransi</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_ROA' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_ROE' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_InvYieldRatio' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_LossRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_ExpRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_CombinedRatio' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_CessionRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_RetentionRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_NetIncomeRatio' class='chart'></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_LiquidRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_InvAdequacyRatio' class='chart'></div>
+                                </div>
+                                <div class="col-md-4 pr-1">
+                                    <div id='chart_PremToClaimRatio' class='chart'></div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ config.ASSETS_ROOT }}/js/plotly-latest.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        $('#loading').show();
+
+        var graphs = {{json_totalassetgrowth | safe}};
+        Plotly.plot('chart_total_asset_growth',graphs,{});
+        graphs = {{json_totalinvestmentgrowth | safe}};
+        Plotly.plot('chart_total_investment_growth',graphs,{});
+        graphs = {{json_totalnetpremincomegrowth | safe}};
+        Plotly.plot('chart_totalnetpremincomegrowth',graphs,{});
+        graphs = {{json_totalpremincomegrowth | safe}};
+        Plotly.plot('chart_totalpremincomegrowth',graphs,{});
+        graphs = {{json_totalclaimbenefitgrowth | safe}};
+        Plotly.plot('chart_totalclaimbenefitgrowth',graphs,{});
+        graphs = {{json_totalopexpensegrowth | safe}};
+        Plotly.plot('chart_totalopexpensegrowth',graphs,{});
+
+        graphs = {{json_JumlahPAS | safe}};
+        Plotly.plot('chart_jumlah_asuransi',graphs,layout);
+        
+        showRatio();
+        showMap();
+    });   
+
+    function showRatio()
+    {
+        var layout = {showlegend: true};
+
+        graphs = {{json_ROA | safe}};
+        Plotly.plot('chart_ROA',graphs,layout);
+
+        graphs = {{json_ROE | safe}};
+        Plotly.plot('chart_ROE',graphs,layout);
+
+        graphs = {{json_InvYieldRatio | safe}};
+        Plotly.plot('chart_InvYieldRatio',graphs,layout);
+
+        graphs = {{json_LossRatio | safe}};
+        Plotly.plot('chart_LossRatio',graphs,layout);
+
+        graphs = {{json_ExpRatio | safe}};
+        Plotly.plot('chart_ExpRatio',graphs,layout);
+
+        graphs = {{json_CombinedRatio | safe}};
+        Plotly.plot('chart_CombinedRatio',graphs,layout);
+
+        graphs = {{json_CessionRatio | safe}};
+        Plotly.plot('chart_CessionRatio',graphs,layout);
+
+        graphs = {{json_RetentionRatio | safe}};
+        Plotly.plot('chart_RetentionRatio',graphs,layout);
+
+        graphs = {{json_NetIncomeRatio | safe}};
+        Plotly.plot('chart_NetIncomeRatio',graphs,layout);
+
+        graphs = {{json_LiquidRatio | safe}};
+        Plotly.plot('chart_LiquidRatio',graphs,layout);
+
+        graphs = {{json_InvAdequacyRatio | safe}};
+        Plotly.plot('chart_InvAdequacyRatio',graphs,layout);
+
+        graphs = {{json_PremToClaimRatio | safe}};
+        Plotly.plot('chart_PremToClaimRatio',graphs,layout);
+    }
+    function showMap()
+    {
+        $.ajax({
+            type: "POST",
+            url: "/do_map_sebaran_kc",
+            data: JSON.stringify('map'),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                displayMap(result);    
+                $('#loading').hide();
+            } 
+        });
+    }
+
+    function displayMap(result)
+    {
+        document.getElementById('map').innerHTML = result['iframe'];
+    }
+</script>
+<!-- Specific Page JS goes HERE  -->
+{% endblock javascripts %}

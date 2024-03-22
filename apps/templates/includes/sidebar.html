@@ -22,33 +22,53 @@ Tip 2: you can also add an image using data-image tag
             <li class="nav-item nav-item">
                 <a class="nav-link" href="{{ url_for('home_blueprint.news') }}">
                     <i class="nc-icon nc-paper-2"></i>
-                    <p>News Analysis</p>
+                    <p>News</p>
                 </a>
             </li>
             <li class="nav-item nav-item">
                 <a class="nav-link" href="{{ url_for('home_blueprint.trend') }}">
                     <i class="nc-icon nc-chart-bar-32"></i>
-                    <p>Trend Analysis</p>
-                </a>
-            </li>
-            <li class="nav-item nav-item">
-                <a class="nav-link" href="{{ url_for('dash_app_blueprint.app1') }}">
-                    <i class="nc-icon nc-badge"></i>
-                    <p>Individual Analysis</p>
-                </a>
-            </li>
-            
-            <li class="nav-item nav-item">
-                <a class="nav-link" href="{{ url_for('dash_app_blueprint.app2') }}">
-                    <i class="nc-icon nc-bank"></i>
-                    <p>Industrial Analysis</p>
+                    <p>Trend</p>
                 </a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" 
                    href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <i class="nc-icon nc-badge"></i> 
+                   <span class="no-icon">Individual</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('dash_app_blueprint.individual') }}"">
+                        <span class="no-icon">Kinerja</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('dash_app_blueprint.individual_timeseries') }}">
+                        <span class="no-icon">Asuransi Jiwa</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('dash_app_blueprint.individual_au_timeseries') }}">
+                        <span class="no-icon">Asuransi Umum</span>
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                   <i class="nc-icon nc-badge"></i> 
+                   <span class="no-icon">Industrial</span>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="{{ url_for('dash_app_blueprint.individual_timeseries') }}">
+                        <span class="no-icon">General</span>
+                    </a>
+                    <a class="dropdown-item" href="{{ url_for('dash_app_blueprint.app3') }}"">
+                        <span class="no-icon">Kinerja</span>
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                    <i class="nc-icon nc-vector"></i> 
-                   <span class="no-icon">Model Analysis</span>
+                   <span class="no-icon">Modelling</span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="{{ url_for('tools_blueprint.predictme') }}">
