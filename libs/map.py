@@ -2,11 +2,6 @@ import requests
 import pandas as pd
 import folium
 import geopandas as gpd
-# indonesia geojson
-geojson = requests.get(
-    "https://github.com/thetrisatria/geojson-indonesia/blob/master/province/id-jk.geojson"
-).json()
-
 
 def prepare():
     # Import GeoJSON Data

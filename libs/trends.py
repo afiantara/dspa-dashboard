@@ -5,10 +5,21 @@ import plotly
 import plotly.express as px
 import geopandas as gpd
 import folium
-from .map import showmap
+from .map import showmap,prepare
+#from map import showmap,prepare
+
 def init():
     #Setup and Import Required Libraries
-    pytrends = TrendReq(hl='id-ID', tz=360)   
+    #pytrends = TrendReq(hl='id-ID', retries=3)   
+    pytrends = TrendReq(
+        hl="id-ID",
+        tz=360,
+        timeout=(10, 25),
+        retries=2,
+        backoff_factor=1,
+        requests_args={"verify": False},
+    )
+    #pytrends = TrendReq(hl='id-ID', tz=360, timeout=(10,25), proxies=['https://34.203.233.13:80',], retries=2, backoff_factor=0.1, requests_args={'verify':False})
     return pytrends  
 
 def get_trend(keywords,timeframe,resolution,pn):

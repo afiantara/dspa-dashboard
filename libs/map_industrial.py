@@ -4,11 +4,6 @@ import pandas as pd
 import geopandas as gpd
 import folium
 
-# indonesia geojson
-geojson = requests.get(
-    "https://github.com/thetrisatria/geojson-indonesia/blob/master/province/id-jk.geojson"
-).json()
-
 db_name = 'datasets/Data_Kantor_Selain_KP.db'
 
 def prepare_geo():
