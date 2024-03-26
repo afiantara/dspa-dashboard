@@ -4,7 +4,8 @@ import pandas as pd
 import geopandas as gpd
 import folium
 
-db_name = 'datasets/Data_Kantor_Selain_KP.db'
+#db_name = 'datasets/Data_Kantor_Selain_KP.db'
+db_direktori='./datasets/direktori/Rekap.db'
 
 def prepare_geo():
     # Import GeoJSON Data
@@ -13,14 +14,49 @@ def prepare_geo():
     #print(df_geo.head())
     return df_geo
 
-def get_dist_by_province():
+def get_dist_by_provinsi():
     # Read sqlite query results into a pandas DataFrame
-    con = sqlite3.connect(db_name)
-    query='select ProvinceDesc as Province,count(*)  as Jumlah from  Data_Kantor_Selain_KP  where report_date =(select  max(report_date) from Data_Kantor_Selain_KP)  group by ProvinceDesc'
+    con = sqlite3.connect(db_direktori)
+    #query='select ProvinceDesc as Province,count(*)  as Jumlah from  Data_Kantor_Selain_KP  where report_date =(select  max(report_date) from Data_Kantor_Selain_KP)  group by ProvinceDesc'
+    query='select Provinsi,sum(Total) as Jumlah from Rekap where report_date =(select  max(report_date) from Rekap) group by Provinsi'
     df=pd.read_sql_query(query, con)
     con.close()
     return df
 
+
+def get_dist_by_province():
+    # Read sqlite query results into a pandas DataFrame
+    con = sqlite3.connect(db_direktori)
+    #query='select ProvinceDesc as Province,count(*)  as Jumlah from  Data_Kantor_Selain_KP  where report_date =(select  max(report_date) from Data_Kantor_Selain_KP)  group by ProvinceDesc'
+    query='select Provinsi as Province,sum(Total) as Jumlah from Rekap where report_date =(select  max(report_date) from Rekap) group by Provinsi'
+    df=pd.read_sql_query(query, con)
+    con.close()
+    return df
+
+def do_mapPlotly():
+    import plotly
+    import plotly.express as px
+    import json
+    #df_geo =prepare_geo()
+    
+    loc_json = './libs/indonesia.geojson'
+    ina= gpd.read_file(loc_json)
+    ina['state'] =ina['state'].replace(['Jakarta Raya'],'DKI Jakarta') 
+    ina['state'] =ina['state'].replace(['Yogyakarta'],'Daerah Istimewa Yogyakarta')
+    
+    df_data=get_dist_by_provinsi()
+    df_merged = ina.merge(df_data, how='inner', left_on='state', right_on='Provinsi')
+    
+    fig = px.choropleth(
+        df_merged, geojson=df_merged,
+        locations="Provinsi", featureidkey="properties.Provinsi",
+        color="Jumlah",
+        color_continuous_scale = px.colors.sequential.Plasma,
+        range_color=[0, 800])
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+    return fig
+    
 def do_map():
     df_geo =prepare_geo()
     df_geo['NAME_1'] =df_geo['NAME_1'].replace(['Jakarta Raya'],'DKI Jakarta') 

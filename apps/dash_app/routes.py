@@ -119,9 +119,6 @@ def individual():
 
     #dropdown year
     years =get_periode(df_ori)
-    print(years)
-
-
     #analitical rasio
     ratio_names = get_ratio_name()
 
@@ -214,6 +211,7 @@ def app3():
     from libs.industry import get_data_insurance,plotGrowthIndustry,plotRasioIndustri,get_pertumbuhan_industri_asuransi
     import plotly
     import plotly.express as px
+    from libs.map_industrial import do_mapPlotly
     df_ori = get_data_insurance()
     df = plotGrowthIndustry(df_ori)
     dfRasio = plotRasioIndustri(df_ori)
@@ -317,11 +315,15 @@ def app3():
         )
     )
     fig.update_layout({
-    'plot_bgcolor': 'rgba(0, 0, 0, 0)',
-    #'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+    'plot_bgcolor': 'rgba(0, 0, 0, 0)'
+        #'paper_bgcolor': 'rgba(0, 0, 0, 0)',
     })
+    
     graphJSON_JumlahPAS = json.dumps(fig,cls=plotly.utils.PlotlyJSONEncoder)
-
+    
+    fig = do_mapPlotly()
+    graphJSON_map = json.dumps(fig,cls=plotly.utils.PlotlyJSONEncoder)
+    
     return render_template('dash_app/industrial02.html', 
                 json_totalassetgrowth = graphJSON_TotalAssetGrowth,
                 json_totalinvestmentgrowth=graphJSON_TotalInvestmentGrowth,
@@ -341,7 +343,8 @@ def app3():
                 json_LiquidRatio=graphJSON_LiquidRatio,
                 json_InvAdequacyRatio=graphJSON_InvAdequacyRatio,
                 json_PremToClaimRatio=graphJSON_PremToClaimRatio,
-                json_JumlahPAS=graphJSON_JumlahPAS
+                json_JumlahPAS=graphJSON_JumlahPAS,
+                json_map=graphJSON_map
                 )
 
 

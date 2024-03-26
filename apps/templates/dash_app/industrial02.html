@@ -16,8 +16,10 @@
                         <p class="card-category">Pertumbuhan Perusahaan Asuransi</p>
                     </div>
                     <div class="card-body">
-                        <div class="col-md-12 pr-1">
-                            <div id='chart_jumlah_asuransi' class='chart'></div>
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                               <div id='chart_jumlah_asuransi' class='chart'></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -27,12 +29,17 @@
               <div class="col-md-12">
                 <div class="card">
                     <div class="card-header ">
-                        <h4 class="card-title">Peta Sebaran Kantor Cabang Perusahaan Asuransi</h4>
-                        <p class="card-category">Peta Sebaran Kantor Cabang Perusahaan Asuransi Per Provinsi</p>
+                        <h4 class="card-title">Peta Sebaran Kantor Pusat Perusahaan Asuransi</h4>
+                        <p class="card-category">Peta Sebaran Kantor Pusat Perusahaan Asuransi Per Provinsi</p>
                     </div>
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 pr-1">
+                               <div id='chart_map' class='chart'></div>
+                            </div>
+                        </div>
                       <!--{{ iframe|safe }}-->
-                        <div id="map" name= 'map'></div>
+                        <!--<div id="map" name= 'map'></div>-->
                         <div id="loading" style="height:80%;width:80%;">
                             <center><img src="/static/assets/img/loading.svg" alt="Loading..." style="border: 0;
                                 border-radius: 4px;
@@ -149,6 +156,9 @@
     $(document).ready(function() {
         
         $('#loading').show();
+        
+        var graphs = {{json_JumlahPAS | safe}};
+        Plotly.plot('chart_jumlah_asuransi',graphs,{});
 
         var graphs = {{json_totalassetgrowth | safe}};
         Plotly.plot('chart_total_asset_growth',graphs,{});
@@ -163,11 +173,12 @@
         graphs = {{json_totalopexpensegrowth | safe}};
         Plotly.plot('chart_totalopexpensegrowth',graphs,{});
 
-        graphs = {{json_JumlahPAS | safe}};
-        Plotly.plot('chart_jumlah_asuransi',graphs,layout);
-        
+        graphs = {{json_map | safe}};
+        Plotly.plot('chart_map',graphs,{});
+
         showRatio();
-        showMap();
+        $('#loading').hide();
+        //showMap();
     });   
 
     function showRatio()
@@ -210,6 +221,7 @@
         graphs = {{json_PremToClaimRatio | safe}};
         Plotly.plot('chart_PremToClaimRatio',graphs,layout);
     }
+    /*
     function showMap()
     {
         $.ajax({
@@ -224,11 +236,11 @@
             } 
         });
     }
-
     function displayMap(result)
     {
         document.getElementById('map').innerHTML = result['iframe'];
     }
+    */
 </script>
 <!-- Specific Page JS goes HERE  -->
 {% endblock javascripts %}
