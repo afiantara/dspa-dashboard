@@ -156,11 +156,16 @@ def getWordCloudVader(data):
     import nltk
     from nltk.corpus import stopwords
     from nltk.stem import WordNetLemmatizer
-    from wordcloud import WordCloud
+    from wordcloud import WordCloud,STOPWORDS
+    import json
+    import plotly
+    import plotly.graph_objs as go
+
     import re
     import nltk
     import os
-
+    import io
+    import base64
     nltk.download('stopwords')
     nltk.download('wordnet')
     nltk.download('omw-1.4')
@@ -182,11 +187,19 @@ def getWordCloudVader(data):
     for row in corpus:
         for word in row:
             word_cloud+=" ".join(word)
-    wordcloud = WordCloud(width = 1000, height = 500,background_color ='white',min_font_size = 10).generate(word_cloud)
-    plt.imshow(wordcloud)
-    plt.axis('off') # to off the axis of x and y
-    target= os.path.join('apps','static','assets','img','sentiment_news_analisis.png')
-    plt.savefig(target)
+
+    wordcloud = WordCloud(width = 1000, height = 1000,background_color ='white',max_font_size=256).generate(word_cloud)
+
+    wordcloudImage = wordcloud.to_image()
+    img = io.BytesIO()
+    wordcloudImage.save(img, format='PNG')
+    imgword='data:image/png;base64,{}'.format(base64.b64encode(img.getvalue()).decode())
+    return imgword
+
+    #plt.imshow(wordcloud)
+    #plt.axis('off') # to off the axis of x and y
+    #target= os.path.join('apps','static','assets','img','sentiment_news_analisis.png')
+    #plt.savefig(target)
 
 def sentiment_analysis(df,model,cat):
     from transformers import pipeline

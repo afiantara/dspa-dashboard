@@ -84,10 +84,11 @@ def analisisInvestasi():
     print(profile)
 
 def PlotAllRasio(df,year=None):
+    import numpy as np
     df=cleansing(df)
     df['date'] = pd.to_datetime(df['REPORT_DATE'], errors='coerce')
     df['yr']=df['date'].dt.year
-    grouped = df.groupby(['yr','sector'])
+    grouped= df.groupby(['yr','sector'])
     average_df = grouped.mean()
     average_df=average_df.reset_index()
     if year:

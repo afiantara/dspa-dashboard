@@ -140,7 +140,6 @@ def search_news():
         if keywords=='':
             return render_template('home/page-data-not-found.html'), 404
 
-        print(keywords)
         news_ori= getnews(keywords)
         
     if None is keywords_ori:
@@ -171,7 +170,7 @@ def search_news():
     graphJSON=plotly_visualize(news_ori)
     graphSentimentJSON=plotly_sentiment_visualize(news_ori)
 
-    getWordCloudVader(news_ori)
+    imgWordcloud = getWordCloudVader(news_ori)
     #if not selected_model:
     #    selected_model='MoritzLaurer/mDeBERTa-v3-base-mnli-xnli'
     #else:
@@ -185,7 +184,8 @@ def search_news():
         per_page=per_page,
         pagination=pagination,
         graphJSON=graphJSON,
-        graphSentimentJSON=graphSentimentJSON
+        graphSentimentJSON=graphSentimentJSON,
+        imgWordcloud=imgWordcloud
         )
 
 

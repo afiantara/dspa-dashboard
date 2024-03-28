@@ -48,7 +48,7 @@
          
          <div class="main-panel">
              {% include 'includes/navigation.html' %}
- 
+             
              {% block content %}{% endblock content %}
              
              {% include 'includes/footer.html' %}
@@ -63,6 +63,7 @@
  {% include 'includes/scripts.html' %}
 
  <!-- Specific Page JS goes HERE  -->
- {% block javascripts %}{% endblock javascripts %}
+ {% block javascripts %}
+ {% endblock javascripts %}
  
  </html>

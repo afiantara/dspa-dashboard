@@ -11,7 +11,7 @@
 
     <div class="content">
         <div class="container-fluid">
-            <form action='/search_news' name='getnews' id='getnews' method='post'> 
+            <form action='/search_news' onsubmit="javascript:submitSearchNews();"  name='getnews' id='getnews' method='post'> 
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -34,6 +34,13 @@
                 </div>
             </div>
             {%if news %}
+            <div id="loading" style="height:80%;width:80%;">
+                <center><img src="/static/assets/img/loading.svg" alt="Loading..." style="border: 0;
+                    border-radius: 4px;
+                    padding: 5px;
+                    background-color: transparent;
+                    width: 200px;"></center>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -95,7 +102,7 @@
                             <p class="card-category">Chart News Analysis</p>
                         </div>
                         <div class="card-body">
-                            <div id='chart' class='chart'></div>
+                            <div id='chart' class='chart' style="height: 100%;"></div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +115,9 @@
                             <p class="card-category">Word Cloud of News Analysis Sentiment</p>
                         </div>
                         <div class="card-body">
-                            <img id="wordcloud" src="/static/assets/img/sentiment_news_analisis.png" alt="Chart" height="100%" width="100%">
+                            <div class="img" align="center">
+                                <img src="{{ imgWordcloud }}" alt="wordcloud">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -126,11 +135,14 @@
     $(document).ready(function() {
         // Javascript method's body can be found in assets/js/demos.js
         //$("#model").val("{{ selected_model }}");
-        var graphs = {{ graphJSON | safe}};
+        var graphs = {{ graphJSON|safe }};
         Plotly.plot('chart',graphs,{});
         
-        var graphs = {{ graphSentimentJSON | safe}};
+        var graphs = {{ graphSentimentJSON|safe }};
         Plotly.plot('sentiment_chart',graphs,{});
+        
+        $('#loading').hide(); 
+
     });   
 </script>
 <script type="text/javascript">
@@ -138,6 +150,13 @@
         $(this).parents(".input-group-btn").find('.btn').text($(this).text());
         $("#model").val($(this).text());
     });
+
+    function submitSearchNews(){
+        $('#loading').show();
+
+        Plotly.purge('chart');
+        Plotly.purge('sentiment_chart');
+    }
 </script>
 <!-- Specific Page JS goes HERE  -->
 {% endblock javascripts %}
