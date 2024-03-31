@@ -1,7 +1,7 @@
 from . import blueprint
 from flask import render_template,redirect,jsonify,request
 from flask_login import login_required
-from dash_app import individual, industrial,industrial02,individual02
+#from dash_app import individual, industrial,industrial02,individual02
 import json
 from libs.individual import *
 from libs.individual02 import *
@@ -433,6 +433,75 @@ def compare_individual_umum():
     } 
     return data_json
 
+
+@blueprint.route('/compare_region_trend',methods= ['GET','POST'])
+@login_required
+def compare_region_trend():
+    if request.method=='POST':
+        data = request.get_json()
+        aj =  data ["aj"]
+        au=  data["au"]
+
+    if len(aj)>0:
+        ajs=aj.split(',')
+        aj=split_strip(ajs,2)
+
+    if len(au)>0:
+        aus=au.split(',')
+        au=split_strip(aus,2)
+    
+    from libs.trend_by_region import  get_trend_by_region
+    keywords =aj.split(',')+au.split(',')
+    print(keywords)
+    list_geo=[]
+    list_geo,graphJSON_map_bar = get_trend_by_region(keywords)
+    data_json = {
+        'json_geo':list_geo,
+        'json_bar':graphJSON_map_bar
+    } 
+    return data_json
+
+@blueprint.route('/compare_trend',methods= ['GET','POST'])
+@login_required
+def compare_trend():
+    import plotly
+    import plotly.express as px
+    from libs.individual_sql import get_compare_trend
+    if request.method=='POST':
+        data = request.get_json()
+        aj =  data ["aj"]
+        au=  data["au"]
+
+    if len(aj)>0:
+        ajs=aj.split(',')
+        aj=split_strip(ajs,1)
+
+    if len(au)>0:
+        aus=au.split(',')
+        au=split_strip(aus,1)
+    
+    df = get_compare_trend(aj,au)
+    fig = px.line(df, x='periode', y='trend_value',color='nama_perusahaan', title='Perbandingan Minat Seiring Waktu')
+    graphJSON = json.dumps(fig,cls=plotly.utils.PlotlyJSONEncoder)
+    
+    data_json = {
+        'json_overtime':graphJSON
+    } 
+    return data_json
+
+@blueprint.route('/trend_perbandingan',methods= ['GET','POST'])
+@login_required
+def trend_perbandingan():
+    from libs.individual_sql import get_companies
+    companies=get_companies()
+    comp = companies.copy()
+    aj = comp.loc[comp['sektor'] == "ASURANSI JIWA"]
+    au = comp.loc[comp['sektor'] == "ASURANSI UMUM"]
+    aj = aj['NAMA_PERUSAHAAN']
+    au = au['NAMA_PERUSAHAAN']
+    return render_template('dash_app/individual_trend.html',
+        aj=aj,
+        au=au)
 
 @blueprint.errorhandler(403)
 def access_forbidden(error):

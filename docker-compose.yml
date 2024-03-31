@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  app:
+  dspa-app:
     container_name: dspa_app
     restart: always
     env_file: .env
@@ -9,7 +9,7 @@ services:
       - db_network
       - web_network
   nginx:
-    container_name: mynginx
+    container_name: nginx
     restart: always
     image: "nginx:latest"
     ports:
@@ -19,7 +19,7 @@ services:
     networks:
       - web_network
     depends_on: 
-      - app
+      - dspa-app
 networks:
   db_network:
     driver: bridge

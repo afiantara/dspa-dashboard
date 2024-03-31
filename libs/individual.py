@@ -88,9 +88,10 @@ def PlotAllRasio(df,year=None):
     df=cleansing(df)
     df['date'] = pd.to_datetime(df['REPORT_DATE'], errors='coerce')
     df['yr']=df['date'].dt.year
-    grouped= df.groupby(['yr','sector'])
-    average_df = grouped.mean()
+    #grouped= df.groupby(['yr','sector'])
+    average_df = df.groupby(['yr','sector']).mean(numeric_only=True)
     average_df=average_df.reset_index()
+    
     if year:
         average_df=average_df.query("yr>={}".format(year))
     else:

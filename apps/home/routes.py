@@ -16,7 +16,6 @@ from apps.home.news import getnews,sentiment_analysis,saveplot, \
 
 from flask_paginate import Pagination,get_page_args
 import os
-from  libs.trends import get_trend
 
 def getListProyek():
     list_code=[]
@@ -201,7 +200,10 @@ def search_trend():
         keyword_orig= request.form['keywords']
         print(f'keyword:',keyword_orig)
         keywords = keyword_orig.split(',')
-        data_overtime,graphJSON_overtime,data_geo,graphJSON_geo,data_q,data_search,iframe= get_trend(keywords,'today 5-y','DMA','indonesia')
+        from libs.trend_by_overtime import get_trend_google_trend
+        data_overtime,graphJSON_overtime =get_trend_google_trend(keywords)
+        from libs.trend_by_region import get_trend_by_region_google_trend
+        data_geo,graphJSON_geo = get_trend_by_region_google_trend(keywords)
         overtime = data_overtime.to_dict(orient='records')
     
     return render_template('home/trend.html',
@@ -209,8 +211,5 @@ def search_trend():
         overtime = overtime,
         graphJSON_overtime = graphJSON_overtime,
         graphJSON_geo=graphJSON_geo,
-        data_geo = data_geo,
-        data_q = data_q,
-        data_search = data_search,
-        iframe=iframe,
+        data_geo = data_geo
         )

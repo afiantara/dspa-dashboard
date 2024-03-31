@@ -3,7 +3,7 @@ import sqlite3
 import json
 
 db_FS_RL_AJ = './datasets/ASURANSI.db'
-db_FS_RL_AU ='./datasets/Asuransi_Umum.db'
+db_FS_RL_AU ='./datasets/ASURANSI_UMUM.db'
 
 ratio=['r_expense', 'r_claim','r_income', 'r_yield investasi', 'r_modal', 'ROA', 'ROE', 'RKI']
 ratio_name=['rasio beban','rasio claim','rasio pendapatan','rasio yield investasi','rasio modal','ROA','ROE','RKI']

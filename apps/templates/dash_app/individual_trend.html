@@ -1,0 +1,214 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Individual Analysis {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h4 class="card-title">Perbandingan Trend Antar Perusahaan Asuransi</h4>
+                        </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12 pr-1">
+                                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                            Options
+                                        </button>
+                                        <button type="button" id='clear_btn' class="btn btn-primary">Clear Options</button>
+                                        <button type="button" id='compare_btn' class="btn btn-primary">Tampilkan</button>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <br>
+                                <div class="collapse" id="collapseExample">
+                                    <div class="row">
+                                        <div class="col-md-4 pr-1">
+                                            <table class="table table-striped table-condensed">
+                                                {%if not aj.empty %}
+                                                    {% for company  in aj: %}
+                                                        <tr>
+                                                            <td class="labeled">
+                                                            <label>
+                                                                <input name="checkbox_val" type="checkbox" />
+                                                            </label>
+                                                            </td>
+                                                            <td><label name="company_name" style="color:black">
+                                                                {{ company|safe }}
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {%endif%}
+                                            </table>
+                                        </div>
+                                        <div class="col-md-4 pr-1">
+                                            <table class="table table-striped table-condensed">
+                                                {%if not au.empty %}
+                                                    {% for account  in au: %}
+                                                        <tr>
+                                                            <td class="labeled">
+                                                            <label>
+                                                                <input name="account_check" type="checkbox" />
+                                                            </label>
+                                                            </td>
+                                                            <td><label name="account_name" style="color:black">
+                                                                {{ account|safe }}
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                {%endif%}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id='data'>
+                                    <div class="col-md-12 pr-1">
+                                        <div id='chart_compare' class='chart'></div>
+                                    </div>
+                                    <div class="col-md-12 pr-1">
+                                        <div id='chart_bar_wilayah' class='chart'></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header ">
+                                                <h4 class="card-title">Sebaran Minat Berdasarkan Wilayah</h4>
+                                                <p class="card-category">Sebaran Minat Berdasarkan Wilayah</p>
+                                            </div>
+                                            <div class="card-body" id="main_chart">
+                                            <!-- BASED ON BANYAK NYA DATA-->
+                                            </div>
+                                            <!--{{ iframe|safe }}-->
+                                            <!--<div id="map" name= 'map'></div>-->
+                                            <div id="loading" style="height:80%;width:80%;">
+                                                <center><img src="/static/assets/img/loading.svg" alt="Loading..." style="border: 0;
+                                                    border-radius: 4px;
+                                                    padding: 5px;
+                                                    background-color: transparent;
+                                                    width: 200px;"></center>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="{{ config.ASSETS_ROOT }}/js/plotly-latest.min.js"></script>
+
+<script type="text/javascript">
+    
+    $(document).ready(function() {
+        var x = document.getElementById("data");
+        x.style.display = "none";
+        $('#loading').hide();
+    });   
+</script>
+<script>
+    $(".dropdown-menu a ").click(function(){
+        $(this).parents(".input-group-btn").find('.btn').text($(this).text());
+        //var _id = $(this).parents(".input-group-btn").find('.btn').attr('id');
+    });
+</script>
+<script>
+    
+    $("#clear_btn").click(function(e) {
+        $('input:checkbox').prop('checked', false);
+    });
+
+    $("#compare_btn").click(function(e) {
+        var checkbox_state = []
+        var company_name = []
+        var account_name=[]
+        $("[name=checkbox_val]:checked").each(function() {
+            company_name.push($(this).closest("tr").find("[name=company_name]").text()) //push value in array
+        })
+        $("[name=account_check]:checked").each(function() {
+            account_name.push($(this).closest("tr").find("[name=account_name]").text()) //push value in array
+        })
+
+        Plotly.purge('chart_compare');
+        Plotly.purge('chart_compare');
+        Plotly.purge('chart_compare');
+        if (company_name.toString()=='' && account_name.toString()=='') 
+            return;
+
+        let toPost = {
+            aj: company_name.toString(),
+            au: account_name.toString(),
+        };
+        var x = document.getElementById("data");
+        x.style.display = "block";
+        $('#loading').show();
+        let jsonStr = JSON.stringify(toPost);
+        $.ajax({
+            type: "POST",
+            url: "/compare_trend",
+            data: jsonStr,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                var graphs = JSON.parse(result['json_overtime']);
+                Plotly.react('chart_compare',graphs,{});
+                //call region
+                showMap(jsonStr);
+            }
+        });
+    });
+
+    function showMap(jsonStr)
+    {
+        $.ajax({
+            type: "POST",
+            url: "/compare_region_trend",
+            data: jsonStr,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result) {
+                //show bar wilayah
+                graphs = JSON.parse(result['json_bar']);
+                Plotly.react('chart_bar_wilayah',graphs,{});
+                //show map wilayah    
+                results =result['json_geo']
+                let len = results.length;
+                var divString=""
+                for(i=0;i<len;i++)
+                {
+                    divString+="<div class='row'><div class='col-md-12 pr-1'><div id='chart_wilayah_" + i + "' class='chart'></div></div></div>";
+                }
+                addChart(divString);
+
+                for(i=0;i<len;i++)
+                {
+                    graphs = JSON.parse(results[i]);
+                    Plotly.react('chart_wilayah_'+i,graphs,{});    
+                }
+                $('#loading').hide();
+            }
+        });
+    }
+    function addChart(divString)
+    {
+        var daParent=document.getElementById("main_chart");
+        daParent.innerHTML=divString;
+    }
+
+</script>
+
+<!-- Specific Page JS goes HERE  -->
+{% endblock javascripts %}

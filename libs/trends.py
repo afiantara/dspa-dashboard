@@ -5,7 +5,9 @@ import plotly
 import plotly.express as px
 import geopandas as gpd
 import folium
-from .map import showmap,prepare
+from map import showmap,prepare
+from tools_sqlite import save_to_db,create_connection
+
 #from map import showmap,prepare
 
 def init():
@@ -22,41 +24,40 @@ def init():
     #pytrends = TrendReq(hl='id-ID', tz=360, timeout=(10,25), proxies=['https://34.203.233.13:80',], retries=2, backoff_factor=0.1, requests_args={'verify':False})
     return pytrends  
 
+def get_trend_db(keywords):
+    try:
+        db_name='./datasets/trends.db'
+        conn= create_connection(db_name)
+        query="SELECT * from trend WHERE keywords='{}'".format(keywords)
+        df = pd.read_sql_query(query,conn)
+        return df
+    except:
+        return pd.DataFrame()
+    
+    
 def get_trend(keywords,timeframe,resolution,pn):
-    pytrends = init()
-    kw_list = keywords # list of keywords to get data 
-    pytrends.build_payload(kw_list, cat=0, timeframe=timeframe,geo='ID') 
-    #1 Interest over Time
-    data_overtime = pytrends.interest_over_time() 
-    data_overtime = data_overtime.reset_index() 
-
+    df_trend = get_trend_db(keywords)
+    if df_trend.shape[0]==0:
+        pytrends = init()
+        kw_list = keywords # list of keywords to get data 
+        pytrends.build_payload(kw_list, cat=0, timeframe=timeframe)#,geo='ID') 
+        #1 Interest over Time
+        data_overtime = pytrends.interest_over_time() 
+        data_overtime = data_overtime.reset_index() 
+        data = data_overtime.copy()
+        data['keywords']=keywords
+        
+        db_name = './datasets/trends.db'
+        tbl_name = 'trend'
+        save_to_db(db_name,tbl_name,data)    
+    
+    else:
+        data_overtime=df_trend.copy()
+    
     fig = px.line(data_overtime, x="date", y=keywords, title='Keyword Web Search Interest Over Time')
     graphJSON_overtime = json.dumps(fig,cls=plotly.utils.PlotlyJSONEncoder)
     
-    #Mengambil data
-    data_geo=pytrends.interest_by_region(resolution=resolution, inc_low_vol=True, inc_geo_code=True)
-    #looking at rows where all values are not equal to 0
-    #data_geo = data_geo[(data_geo != 0).all(1)]
-    #drop all rows that have null values in all columns
-    #data_geo.dropna(how='all',axis=0, inplace=True)
-
-    fig = px.bar(data_geo, y=keywords,title='Keyword Web Search Interest Over Time')
-    graphJSON_geo = json.dumps(fig,cls=plotly.utils.PlotlyJSONEncoder)
-    
-    iframe= showmap(data_geo,keywords)
-    
-    data_q  = pytrends.related_queries()
-    '''
-    for keyword in keywords:
-        print(keyword)
-        data_q[keyword]['top'] 
-    for keyword in keywords:
-        keywords = pytrends.suggestions(keyword=keyword)
-        data_suggestion = pd.DataFrame(keywords)
-    '''    
-    #Mengambil data trending
-    data_search=pytrends.trending_searches(pn=pn) 
-    return data_overtime,graphJSON_overtime,data_geo,graphJSON_geo,data_q,data_search,iframe    
+    return data_overtime,graphJSON_overtime    
 
 def last5yeartrend(keywords):
     pytrends = init()
@@ -95,7 +96,23 @@ def last5yeartrend(keywords):
 
 if __name__=="__main__":
     keywords = ['Jiwasraya','Wanaartha Life']
-    data_overtime,graphJSON_overtime,data_geo,data_q,data_search = get_trend(keywords,'today 5-y','DMA','indonesia')
+    #set keyword
+    #mengambil data
+    
+    import urllib3
+    http = urllib3.PoolManager()
+    url = 'https://trends.google.com/trends/explore?q=Jiwasraya,Wanaartha&date=now%205-y&geo=ID'
+    resp = http.request('GET', url)
+    print(resp.status)
+    
+    pytrends = TrendReq()
+    pytrends.build_payload(keywords, timeframe='today 5-y')
+    result = pytrends.interest_over_time()
+    db_name = './datasets/trends.db'
+    tbl_name = 'trend'
+    save_to_db(db_name,tbl_name,result)  
+    #print(result)
+    #data_overtime,graphJSON_overtime,data_geo,data_q,data_search = get_trend(keywords,'today 5-y','DMA','indonesia')
 
     #last5yeartrend(keywords)
 
