@@ -219,7 +219,7 @@ def connect_sql_server():
     load_dotenv('./.env')
     SERVER_DB = os.getenv('SERVER')
     DB=os.getenv("DATABASE")
-    USER = os.getenv("USERNAME")
+    USER = os.getenv("USERSQL")
     PWD = os.getenv("PASSWORD")
     
     connstring="DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={};DATABASE={};UID={};PWD={};Trusted_Connection=no".format(SERVER_DB,DB,USER,PWD)
@@ -231,16 +231,17 @@ def connect_sql_server():
 
 def save_to_db(df,table,keyword,conn):
     from sqlalchemy.exc import SQLAlchemyError
-    query ="DELETE FROM dbo.{} WHERE NAMA_PERUSAHAAN='{}'".format(table,keyword)
-    try:
-        r_set=conn.execute(text(query))
-    except SQLAlchemyError as e:
-        print(e._message)
-    else:
-        print("No of Records deleted : ",r_set.rowcount)
+    if conn:
+        query ="DELETE FROM dbo.{} WHERE NAMA_PERUSAHAAN='{}'".format(table,keyword)
+        try:
+            r_set=conn.execute(text(query))
+        except SQLAlchemyError as e:
+            print(e._message)
+        else:
+            print("No of Records deleted : ",r_set.rowcount)
 
-    df.to_sql('trends_geo',conn,if_exists='append', index=False)
-    conn.commit()
+        df.to_sql('trends_geo',conn,if_exists='append', index=False)
+        conn.commit()
 
 def show_bar_graph(keywords,conn):
     import pandas as pd

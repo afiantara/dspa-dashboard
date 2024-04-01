@@ -1,12 +1,12 @@
 import os
-import pyodbc
 from  sqlalchemy import create_engine
 import pandas as pd
 def connect_sql_server():
+    import pyodbc
     #load_dotenv('./.env')
     SERVER_DB = os.getenv('SERVER')
     DB=os.getenv("DATABASE")
-    USER = os.getenv("USERNAME")
+    USER = os.getenv("USERSQL")
     PWD = os.getenv("PASSWORD")
     
     connstring="DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={};DATABASE={};UID={};PWD={};Trusted_Connection=no".format(SERVER_DB,DB,USER,PWD)

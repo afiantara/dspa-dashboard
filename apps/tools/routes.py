@@ -47,7 +47,9 @@ def showpyg():
 @login_required
 def showdtale():
     print('tools-route_default')
-    _url = 'http://localhost:9000'
+    _dtale_server = os.getenv('SERVER_DTALE')
+    _dtale_port   = os.getenv('PORT_DTALE')
+    _url = '{}:{}'.format(_dtale_server,_dtale_port)
     return render_template('tools/dtale.html',data=_url)
 
 @blueprint.route('/showml')
